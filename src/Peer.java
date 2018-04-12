@@ -49,6 +49,7 @@ public class Peer{
 		this.server = new Server(portNum);
 		// parse metadata and initiate all filetrackers
 		// initiate one FileClient for each file tracker
+		// TODO: intanciate and run a PersistanceWorker
 		
 		
 		
