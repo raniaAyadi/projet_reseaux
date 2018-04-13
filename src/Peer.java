@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,6 +21,7 @@ public class Peer{
 	private Server server ;         // l'entité Serveur de Peer
 	//private Client client;        // l'entité Client de Peer
 	private Config config;    		// pour extraire les données de configuration
+	private List<FileTracker> fileTrackers;
 	
 	/**
 	 * Constructeur
@@ -29,6 +32,7 @@ public class Peer{
 		this.configPath = configPath;
 		this.log = Logger.getLogger(this.getClass().getName());
 		this.config = Config.getInstance(this.configPath);
+		this.fileTrackers = new ArrayList<>();
 		init();
 	}
 
@@ -46,10 +50,16 @@ public class Peer{
 		this.log.log(Level.INFO, "Server portNumber : "+portNum);
 		// lecture des propriétés de configuration du client
 		
-		this.server = new Server(portNum);
-		// parse metadata and initiate all filetrackers
-		// initiate one FileClient for each file tracker
-		// TODO: intanciate and run a PersistanceWorker
+		
+		PersistanceWorker pworker = new PersistanceWorker(fileTrackers);
+		Thread th = new Thread(pworker);
+		th.start();
+		// TODO: initiate one FileClient for each file tracker
+		
+		//this.server = new Server(portNum);
+		
+		
+		
 		
 		
 		
