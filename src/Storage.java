@@ -14,11 +14,19 @@ public class Storage {
 		return ret;
 	}
 	
-	public static void writePiece(String filePath,byte[] piece,int offset)throws Exception{	
+	public static void writePiece(String filePath,byte[] piece,int offset) {	
 		// TODO : update to support files containing holes 
-		RandomAccessFile raf = new RandomAccessFile(filePath, "rw");
-		raf.seek(offset);
-		raf.write(piece);
-		raf.close();
+		while(true){
+			try{
+				RandomAccessFile raf = new RandomAccessFile(filePath, "rw");
+				raf.seek(offset);
+				raf.write(piece);
+				raf.close();
+				break;
+			}catch (Exception e){
+				System.out.println("File write failer, file is used by another process");
+			}
+		}
+	
 	}
 }

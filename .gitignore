@@ -1,6 +1,7 @@
 
-# class files
+# bin
 *.class
+*.exe
 
 # log files
 *.log

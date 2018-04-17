@@ -52,7 +52,7 @@ public class FileDownloader implements Runnable {
 		if(!found)
 			startIndex = getRandom();
 		
-		// loop throw the ramining pieces, and download all each piece from one of the connections
+		// loop throw the remaining pieces, and download  each piece from one of the connections
 		int connIndex = -1;
 		int nb_conns = connections.size();
 		// TODO: treat case where there are no connections
@@ -74,14 +74,15 @@ public class FileDownloader implements Runnable {
 			
 		      // for each connected peer make a piece choice and:
 		      // ResponseObject obj = PeerConnection.sendRequest(file,pieceOffset...);
-		      try{
+		    /* 
+			try{
 		    	  System.out.println("file downloader thread");
-		    	  Thread.sleep(1000 * 2);
+		    	  Thread.sleep(100);
 		    	  // operation.addPiece....
 		    	  // FileTracker.updateBufferMap();
 		      }catch(Exception e){
 		        // ...
-		      }
+		      }*/
 		}
 		
 	}

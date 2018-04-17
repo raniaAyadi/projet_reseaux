@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -28,6 +29,7 @@ public class FileTracker implements java.io.Serializable   {
 	private BitSet bufferMap;
 
 
+
 	/**
 	 * Constructor to start seeding a new file, it hashes the name, sets the pieces, the bufferMap, size ...
 	 * @param fileName just the name of the file to start seeding (not the path)
@@ -54,9 +56,10 @@ public class FileTracker implements java.io.Serializable   {
 	 * In this case the piece size, total size, nb of pieces ... has to be passed as argumet, program must get this data from the Tracker
 	 * for each filetracker like this one, there should be a file download thread, which will constantly try to download the file content from other peers
 	 * @param fileName
+	 * @throws IOException 
 	 *
 	 */
-	public FileTracker(String fileName,long size, int pieceSize,String key,String path){
+	public FileTracker(String fileName,long size, int pieceSize,String key,String path) throws IOException{
 		this.fileName = fileName;
 		this.size = size;
 		this.pieceSize = pieceSize;
@@ -76,10 +79,23 @@ public class FileTracker implements java.io.Serializable   {
 				this.filePath = "." + fileName;
 			}
 		}
+		File fl = new File(filePath);
+		if(fl.exists())
+			fl.delete();
+		fl.createNewFile();
+			
+		
 	}
 
 
 	public void addPiece(byte[]piece,int pieceIndex) throws Exception{
+		// trim the fat in case of last piece
+		if(pieceIndex == (numberPieces -1)){
+			int chunksize = (int) (pieceSize - (numberPieces*pieceSize - size)) ;
+			byte[] aux = new byte[chunksize];
+			System.arraycopy(piece, 0, aux, 0, chunksize);
+			piece = aux;
+		}
 		Storage.writePiece(fileName, piece,(int)( pieceIndex * pieceSize) );
 		bufferMap.set(pieceIndex);
 	}
@@ -90,8 +106,7 @@ public class FileTracker implements java.io.Serializable   {
 	}
 
 	public boolean isSeeding(){
-		// TODO: return value based on the bitSet : bufferMap
-		return false;
+		return bufferMap.cardinality() == numberPieces;
 	}
 
 
