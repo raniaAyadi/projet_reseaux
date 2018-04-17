@@ -5,10 +5,10 @@ import java.io.RandomAccessFile;
 public class Storage {
 
 	
-	public static byte[] readPiece(String filePath,int offset,int pieceSize) throws Exception{
+	public static byte[] readPiece(String filePath,long l,int pieceSize) throws Exception{
 		byte[] ret = new byte[pieceSize];
 		RandomAccessFile raf = new RandomAccessFile(filePath, "r");
-		raf.seek(offset);
+		raf.seek(l);
 		raf.read(ret);
 		raf.close();
 		return ret;

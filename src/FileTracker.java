@@ -4,45 +4,43 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.BitSet;
 
+import org.jasypt.util.password.BasicPasswordEncryptor;
+
 
 
 /**
- * This class is responsible for keeping track of the file content +  update on demand its content on disk 
- * Each file should have its own fileTracker, whether it has finished downloading(seeding), or have just started 
+ * This class is responsible for keeping track of the file content +  update on demand its content on disk
+ * Each file should have its own fileTracker, whether it has finished downloading(seeding), or have just started
  * This object state is restored after application shutdown based on the serialisation file of this fileTracker palced in the .meta folder
- * 
+ *
  * @author Adem Hmama
  * @version 1.0
- * 
+ *
  * */
 public class FileTracker implements java.io.Serializable   {
 
-	
+	private String key;
 	private String fileName;
-	private byte[]  key;
+	private String filePath;
 	private long size; // in bytes
-	private long pieceSize; // in bytes
+	private int  pieceSize; // in bytes
 	private int numberPieces;
 	private BitSet bufferMap;
-	
+
+
 	/**
 	 * Constructor to start seeding a new file, it hashes the name, sets the pieces, the bufferMap, size ...
-	 * @param fileName just the name of the file to start seeding (not the path)  
-	 * @throws NoSuchAlgorithmException 
+	 * @param fileName just the name of the file to start seeding (not the path)
+	 * @throws NoSuchAlgorithmException
 	 */
-	public FileTracker(String fileName) throws NoSuchAlgorithmException{
+	public FileTracker(String fileName,String filePath) throws NoSuchAlgorithmException{
 
-			// TODO: get download path from config
-			String downloadPath = "C:\\Users\\msi\\Desktop\\app_downloads";
-			String filePath = downloadPath + File.separator +fileName;
+			this.filePath = filePath;
 			this.fileName = fileName;
 			size  =  (new File(filePath)).length();
 			// TODO: if file size is too big, piece size should be also bigger that this value
 			pieceSize = 4;
-			// TODO: get hashing algorithm from config 
-			MessageDigest digest = MessageDigest.getInstance("SHA-256");
-			// TODO: utf_8 or utf_16 ??
-			key = digest.digest(fileName.getBytes());
+			key = (new BasicPasswordEncryptor()).encryptPassword(fileName);	
 			numberPieces = (int) (size/pieceSize);
 			if((size%pieceSize) !=0 )
 				numberPieces++;
@@ -50,15 +48,15 @@ public class FileTracker implements java.io.Serializable   {
 			bufferMap = new BitSet( numberPieces);
 			bufferMap.set(0, numberPieces);
 	}
-	
+
 	/**
 	 * Constructor to start leeching a new file (generally gets called on user request for file download using a certain key)
 	 * In this case the piece size, total size, nb of pieces ... has to be passed as argumet, program must get this data from the Tracker
 	 * for each filetracker like this one, there should be a file download thread, which will constantly try to download the file content from other peers
 	 * @param fileName
-	 * 
+	 *
 	 */
-	public FileTracker(String fileName,int size, int pieceSize,byte[] key){
+	public FileTracker(String fileName,long size, int pieceSize,String key,String path){
 		this.fileName = fileName;
 		this.size = size;
 		this.pieceSize = pieceSize;
@@ -68,16 +66,37 @@ public class FileTracker implements java.io.Serializable   {
 			numberPieces++;
 		bufferMap = new BitSet(numberPieces);
 		bufferMap.set(0,numberPieces,false);
+		// TODO: filePath
+		if(path != null){
+			this.filePath = path + File.separator + fileName;
+		}else{
+			if(Peer.downloadPath != null){
+				this.filePath = Peer.downloadPath + File.separator + fileName;
+			}else{
+				this.filePath = "." + fileName;
+			}
+		}
 	}
-	
-	
-	public void writePiece(byte[]piece,int pieceIndex) throws Exception{
+
+
+	public void addPiece(byte[]piece,int pieceIndex) throws Exception{
 		Storage.writePiece(fileName, piece,(int)( pieceIndex * pieceSize) );
 		bufferMap.set(pieceIndex);
 	}
-	
-	
-	// delete me 
+
+	public byte[] getPiece(int pieceIndex) throws Exception{
+		// last piece will be jammed with white spaces (bits de bourrage)
+		return Storage.readPiece(filePath, pieceIndex*pieceSize, pieceSize);
+	}
+
+	public boolean isSeeding(){
+		// TODO: return value based on the bitSet : bufferMap
+		return false;
+	}
+
+
+
+	// delete me
 	public void printBufferMap(){
 		System.out.println("bufferMap:");
 		for (int i = 0; i < numberPieces; i++) {
@@ -89,17 +108,17 @@ public class FileTracker implements java.io.Serializable   {
 		}
 		System.out.println("");
 	}
-	
+
 	public int getNumberPieces(){
 		return numberPieces;
 	}
-	
-	public byte[] getKey() {
+
+	public String getKey() {
 		return key;
 	}
 
 
-	public void setKey(byte[] key) {
+	public void setKey(String key) {
 		this.key = key;
 	}
 
@@ -114,12 +133,12 @@ public class FileTracker implements java.io.Serializable   {
 	}
 
 
-	public long getPieceSize() {
+	public int getPieceSize() {
 		return pieceSize;
 	}
 
 
-	public void setPieceSize(long pieceSize) {
+	public void setPieceSize(int pieceSize) {
 		this.pieceSize = pieceSize;
 	}
 
@@ -138,11 +157,13 @@ public class FileTracker implements java.io.Serializable   {
 		this.fileName = fileName;
 	}
 
-	
-	
+
+
 	public String getFileName(){
 		return fileName;
 	}
-	
+
+
+
 
 }
