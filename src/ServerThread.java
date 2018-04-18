@@ -8,10 +8,11 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
 /**
  * Classe ServerThread
- * ServerThread hÃ©rite la classe Thread
- * un serverThread est associÃ© Ã  une connexion particuliÃ¨re identifiÃ©e par un socket passÃ© en paramÃ¨tre
+ * ServerThread hérite la classe Thread
+ * un serverThread est associé à une connexion particulière identifiée par un socket passé en paramètre
  */
 
 public class ServerThread extends Thread {
@@ -21,10 +22,11 @@ public class ServerThread extends Thread {
 	private Config config;
 	PrintWriter out;
 	BufferedReader in;
+	String lastMessage;       // Utile pour relire le dernier message sans attendre le flux d'entrée
 	/**
 	 * 
 	 * @param socket docket du client
-	 * @param numClient le numÃ©ro du client
+	 * @param numClient le numéro du client
 	 * @throws IOException
 	 */
 	public ServerThread(Socket socket, Integer numClient) throws IOException{
@@ -39,65 +41,93 @@ public class ServerThread extends Thread {
 		this.log.log(Level.INFO,this+ "is connected");
 	}
 	
-	private InitRequestServer receiveInit() throws IOException, ProtocolException {
-		log.log(Level.INFO," receive initialization request");
+	/**
+	 * 
+	 * @param className pour instancier la classe concrète en applelant le fabriquant
+	 * @param readOver = true pour imposer la relecture de flux, sinon l'attente d'un nouveau message
+	 * @return instance de la classe className
+	 * @throws IOException
+	 * @throws ProtocolException
+	 */
+	private Request receive(String className, boolean readOver) throws IOException, ProtocolException{
+		log.log(Level.INFO,className);
+		String message;
 		
-		String message = Operation.readInputStream(in);
-		log.log(Level.INFO, "Message received is : " + message);
+		if(readOver == true) {
+			if(lastMessage == null) {
+				throw new IOException("Pas de message à relire !");
+			}
+			message = lastMessage;
+		}
+		else {
+			message = Operation.readInputStream(in);
+			log.log(Level.INFO, "Message received is : " + message);
+			this.lastMessage = message;
+		}
 		
-		return InitRequestServer.getInstance(message);
+		Request req = RequestFactory.createRequest(className, message);
+		if(req == null) {
+			//A préciser l'exception (ClassNotFoundEception, etc)
+			throw new IOException();
+		}
+		
+		return req;
 	}
 	
-	private void sendInit(InitRequestServer req) throws IOException, ProtocolException {
-		InitResponseServer res = new InitResponseServer(req);
+	private void send(String className, Request req) throws IOException, ProtocolException {
+		Response res = ResponseFactory.createResponse(className, req.getFields());
 		String message = res.getMessage();
-		
 		log.log(Level.INFO, "Message to send is :"+message);
+
 		out.println(message);
 		out.flush();
 	}
 	
-	private GetRequestServer receiveGet() throws IOException, ProtocolException{
-		log.log(Level.INFO," receive get request");
+	/**
+	 * Cette méthode permet de communiquer avec le client selon sa requete d'initialisation
+	 * Deux scénarios possibles 
+	 * Soit le client demande le téléchargement d'un fichier 
+	 * @see protocoleDownload()
+	 * Soit le client demande l'etat d'un fichier
+	 * @see protocolInformations
+	 */
+	private void communicate() {
+		Request req = null;
 		
-		String message = Operation.readInputStream(in);
-		log.log(Level.INFO, "Message received is : " + message);
-		
-		return GetRequestServer.getInstance(message);
-	}
-	
-	private void sendGet(GetRequestServer req) throws ProtocolException, IOException {
-		GetResponseServer res = new GetResponseServer(req);
-		String message = res.getMessage();
-		
-		log.log(Level.INFO, "Message to send is : "+message);
-		out.println(message);
-		out.flush();
-	}
-	
-	public void run() {
-		log.log(Level.INFO, Thread.currentThread().getName());
-		
-		InitRequestServer req = null;
-		
-		while(req == null) {
+		while (req == null) {
 			try {
-				req =  this.receiveInit();
+				req = receive(InitRequestServer.class.getName(), false);
+				this.protocolDownload((InitRequestServer) req);
 			} catch (IOException e) {
-			    e.printStackTrace();
+				e.printStackTrace();
 			    this.out.println("Erreur interne");
 			    out.flush();
 			    disconnect();
 			} catch (ProtocolException e) {
 				e.printStackTrace();
-				this.out.println(e.getMessage());
-				this.out.flush();
-				req = null;
+				try {
+				
+					req = receive(HaveRequestServer.class.getName(), true);
+					this.protocolInformations((HaveRequestServer) req);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				    this.out.println("Erreur interne");
+				    out.flush();
+				    disconnect();
+				} catch (ProtocolException e1) {
+					e1.printStackTrace();
+					this.out.println(e1.getMessage());
+					this.out.flush();
+					req = null;
+				}
+				
 			}
 		}
-		
+	}
+	
+	private void protocolDownload(InitRequestServer req) {
 		try {
-			this.sendInit(req);
+			this.send(InitResponseServer.class.getName(),req);
 		} catch (IOException e) {
 			e.printStackTrace();
 		    this.out.println("Erreur interne");
@@ -115,7 +145,7 @@ public class ServerThread extends Thread {
 		GetRequestServer req2 = null;
 		while(req2 == null) {
 			try {
-				req2 =  this.receiveGet();
+				req2 = (GetRequestServer) this.receive(GetRequestServer.class.getName(), false);
 			} catch (IOException e) {
 			    e.printStackTrace();
 			    this.out.println("Erreur interne");
@@ -129,7 +159,8 @@ public class ServerThread extends Thread {
 			}
 		}
 		
-		try {			this.sendGet(req2);
+		try {			
+			this.send(GetResponseServer.class.getName(), req2);
 		} catch (IOException e) {
 			e.printStackTrace();
 		    this.out.println("Erreur interne");
@@ -140,8 +171,34 @@ public class ServerThread extends Thread {
 			this.out.flush();
 		}
 		finally {
-			this.disconnect();
+			disconnect();
 		}
+
+
+	}
+	
+	private void protocolInformations(HaveRequestServer req) {
+		try {			
+			this.send(HaveResponseServer.class.getName(), req);
+		} catch (IOException e) {
+			e.printStackTrace();
+		    this.out.println("Erreur interne");
+		    out.flush();
+		} catch (ProtocolException e) {
+			e.printStackTrace();
+			this.out.println(e.getMessage());
+			this.out.flush();
+		}
+		finally {
+			disconnect();
+		}
+		
+
+	}
+	
+	public void run() {
+		log.log(Level.INFO, Thread.currentThread().getName());
+		this.communicate();
 	}
 	
 	private void disconnect(){

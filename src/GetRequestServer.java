@@ -1,29 +1,16 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Set;
 
-public class GetRequestServer extends Decoder {
+public class GetRequestServer extends Request {
 	
-	private static final String REG = "[gE][eE][tT][pP][iI][eE][cC][eE][sS]\\p{Space}+(\\p{Alnum}+)\\p{Space}"
+	private static final String REG = "[gE][eE][tT][pP][iI][eE][cC][eE][sS]\\p{Space}+(\\p{Alnum}+)\\p{Space}+"
 									+ "\\[([0-9]+(\\p{Space}[0-9]+)*)\\]\\p{Space}*";
 	
-	private static GetRequestServer instance = null;
 	
-	private GetRequestServer(String in) throws ProtocolException {
+	public GetRequestServer(String in) throws ProtocolException {
 		super(in);
 	}
 
-	public static GetRequestServer getInstance(String in) throws ProtocolException {
-		if(instance == null) {
-			instance = new GetRequestServer(in);
-		}
-		else {
-			instance.setIn(in);
-		}
-		return instance;
-	}
-	
 	@Override
 	protected void setExp() {
 		this.exp = REG;

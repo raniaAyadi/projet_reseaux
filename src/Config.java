@@ -12,18 +12,18 @@ import org.w3c.dom.NodeList;
 
 /**
  * Class Config
- * Le patron de conception Singleton est implÃ©mentÃ©
+ * Le patron de conception Singleton est implémenté
  * config permet d'analyser un fichier de configuration ecrit en XML
- * Les propriÃ©tÃ©s sont enregistrÃ©s dans un dictionnaire {NAME : VALUE}
+ * Les propriétés sont enregistrés dans un dictionnaire {NAME : VALUE}
  */
 public class Config {
 	
 	private File file;                   		// le fichier de configuration 
-	private Map<String, Object> fields;   		// le dictioannire des propriÃ©tÃ©s
-	private static Config instance = null;      // l'instance partagÃ©e (Patron Singleton)
+	private Map<String, Object> fields;   		// le dictioannire des propriétés
+	private static Config instance = null;      // l'instance partagée (Patron Singleton)
 	
 	/**
-	 * Constructeur privÃ© pour implÃ©menter le patron de conception Singleton
+	 * Constructeur privé pour implémenter le patron de conception Singleton
 	 * @param filePath le chemin relatif du fichier de configuration
 	 * @throws XML error 
 	 */
@@ -128,20 +128,31 @@ public class Config {
 	}
 	
 	/**
-	 * lire une propriÃ©tÃ©
-	 * @param key le nom de la propriÃ©tÃ©
-	 * @return null si la propriÃ©tÃ© n'existe pas
+	 * lire une propriété
+	 * @param key le nom de la propriété
+	 * @return null si la propriété n'existe pas
 	 */
 	public Object getField(String key) {
 		return this.fields.get(key);
 	}
 	
 	/**
-	 * VÃ©rifie si un champ existe ou non
+	 * Vérifie si un champ existe ou non
 	 * @param key identifiant du champ
 	 * @return true si key existe
 	 */
 	public Boolean getKey(String key) {
 		return this.fields.containsKey(key);
+	}
+	
+	/**
+	 * lire une propriété d'un fichier
+	 * @param fileKey l'identifiant du fichier
+	 * @param key l'identifiant de la prorpiété
+	 * @return la valeur de la proprièté (String)
+	 */
+	public String getField(String fileKey, String key) {
+		Map<String, String> fileProp = (Map<String, String>) this.getField(fileKey);
+		return fileProp.get(key);
 	}
 }

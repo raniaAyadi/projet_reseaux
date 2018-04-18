@@ -7,19 +7,46 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.BitSet;
 
 import org.jasypt.util.password.ConfigurablePasswordEncryptor;
 
 /**
  * Classe Operation
- * Operation implÃ©mente les focntions opÃ©rationnelles indispensables comme des mÃ©thodes static
+ * Operation implémente les focntions opérationnelles indispensables comme des méthodes static
  */
 
 public class Operation {
     private static final String ABC="a9zert0yuiop81qsdf2ghjkl3mw45xc6vb7n";
     
+    
+	public static String bitsetToString(BitSet b,int size){
+		String ret = "";
+		for(int i = 0 ; i < size;i ++){
+			if(b.get(i)){
+				ret+='1';
+			}else{
+				ret += '0';
+			}
+		}
+		return ret;
+	}
+	
+	public static BitSet stringToBitset(String s) {
+		BitSet b = new BitSet(s.length());
+		for(int i =0;i < s.length();i++	){
+			if(s.charAt(i) == '1')
+				b.set(i, true);
+			else
+				b.set(i,false);
+		}
+		return b;
+	}
+    
+    
+    
     /**
-     * La fermeture du flux est gÃ©rÃ©e par l'appelant
+     * La fermeture du flux est gérée par l'appelant
      * @param in
      * @return
      * @throws IOException
@@ -55,7 +82,7 @@ public class Operation {
 	}
     
     /**
-     * Lecture de contenu d'un fichier par caractÃ¨re
+     * Lecture de contenu d'un fichier par caractère
      * @param filePath
      * @return le contenu de fichier
      * @throws IOException si le fichier n'existe pas
@@ -75,9 +102,9 @@ public class Operation {
      
 	/**
 	 * 
-	 * @param s la chaine Ã  crypter
+	 * @param s la chaine à crypter
 	 * @param algo l'algorihtme de hacahge
-	 * @return la clÃ©
+	 * @return la clé
 	 */
     public static String getKey(String s, String algo){
         ConfigurablePasswordEncryptor passwordEncryptor = new ConfigurablePasswordEncryptor();

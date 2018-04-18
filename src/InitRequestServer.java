@@ -14,34 +14,22 @@ import java.util.regex.Pattern;
 
 /**
  * Classe RequestInitialisation
- * permet de dÃ©coder et de vÃ©rifier la requete d'initialisation envoyÃ© par le client
+ * permet de décoder et de vérifier la requete d'initialisation envoyé par le client
  */
 
-public class InitRequestServer extends Decoder{
+public class InitRequestServer extends Request{
 
 	private static final String REG = "[iI][nN][tT][eE][rR][eE][sS][tT][eE][dD]"
 									+ "\\p{Space}+(\\p{Alnum}+)\\p{Space}*";
-	private static InitRequestServer instance = null;
 	
 	/**
 	 * 
 	 * @param in le message recu 
 	 * @throws ProtocolException si le message n'est pas conforme au protocole
 	 */
-	private InitRequestServer(String in) throws ProtocolException {
+	public InitRequestServer(String in) throws ProtocolException {
 		super(in);
-	}
-	
-	public static InitRequestServer getInstance(String in) throws ProtocolException {
-		if(instance == null) {
-			instance = new InitRequestServer(in);
-		}
-		else {
-			instance.setIn(in);
-		}
-		
-		return instance;
-	}
+	}	
 
 	@Override
 	protected void setExp() {

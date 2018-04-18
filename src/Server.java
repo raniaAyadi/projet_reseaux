@@ -9,21 +9,21 @@ import java.util.logging.Logger;
 
 /**
  * Classe Server
- * Server hÃ©rite Thread pour s'Ã©xÃ©cuter en parallÃ¨le avec un Client
- * un server se caractÃ¨rise un numÃ©ro de port, sur lequel il est en Ã©coute permanente 
+ * Server hérite Thread pour s'éxécuter en parallèle avec un Client
+ * un server se caractèrise un numéro de port, sur lequel il est en écoute permanente 
  */
 
 public class Server extends Thread {
 	
 	private ServerSocket serverSocket;        // le socket de serveur
-	private Integer portNum;                  // passÃ© en paramÃ¨tre dÃ©s l'initialisation
-	private Logger log;                       // pour le dÃ©bogage
-	private List<ServerThread> threadList ;   // enregistrer la liste des thread associÃ© Ã  chaque connexion (client)
+	private Integer portNum;                  // passé en paramètre dés l'initialisation
+	private Logger log;                       // pour le débogage
+	private List<ServerThread> threadList ;   // enregistrer la liste des thread associé à chaque connexion (client)
 	
 	
 	/**
 	 * Constructeur
-	 * @param portNum numÃ©ro de port
+	 * @param portNum numéro de port
 	 */
 	public Server(Integer portNum){
 		this.log = Logger.getLogger(this.getClass().getName());
@@ -48,7 +48,7 @@ public class Server extends Thread {
 	}
 	
 	/**
-	 * Etablissement d'une connexion en passant la socket Ã  un thread traitant (ServerThread)
+	 * Etablissement d'une connexion en passant la socket à un thread traitant (ServerThread)
 	 */
 	private void connect(){
 		Socket socket;
@@ -67,7 +67,7 @@ public class Server extends Thread {
 	}
 	
 	/**
-	 * redÃ©finition de la mÃ©thode run de Thread pour lancer le thread
+	 * redéfinition de la méthode run de Thread pour lancer le thread
 	 */
 	public void run(){
 		log.log(Level.INFO, Thread.currentThread().getName());
