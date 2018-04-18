@@ -65,11 +65,12 @@ public class FileDownloader implements Runnable {
 			try {
 				Map<Integer, byte[]> res =  con.getpieces(req,ft);
 				byte[] tosave =  res.get(startIndex);
-				ft.addPiece(tosave, startIndex);
+				if(tosave == null)
+					continue;
+			    ft.addPiece(tosave, startIndex);
 				startIndex = (startIndex + 1)%ft.getNumberPieces();
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				continue;
 			}
 			
 		      // for each connected peer make a piece choice and:
