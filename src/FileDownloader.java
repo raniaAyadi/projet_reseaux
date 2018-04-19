@@ -4,12 +4,11 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 
 /**
- * *
+ * This class implements a thread, one thread is started for any leeching file
+ * FileDownloader uses all peer connections announced by the file tracker 
  * @author Adem Hmama
  * @version 1.0
  * 
- * the role of this class is to use all possible ressources (connected peers) to download the hole file
- *
  */
 public class FileDownloader implements Runnable {
 
@@ -20,7 +19,7 @@ public class FileDownloader implements Runnable {
 	FileDownloader(FileTracker ft) throws Exception{
 		this.ft = ft;
 		connections = new ArrayList<>();
-		List<SimpleEntry<String , Integer>> ret =  Peer.trackerConnection.getfile(ft.getKey());
+		List<SimpleEntry<String , Integer>> ret =  ApplicationContext.trackerConnection.getfile(ft.getKey());
 		for(int i=0;i<ret.size();i++){
 			SimpleEntry<String , Integer> ent = ret.get(i);
 			PeerConnection con = new PeerConnection(ent.getKey(), ent.getValue().intValue(), ft);
@@ -33,6 +32,10 @@ public class FileDownloader implements Runnable {
 		return ft.getNumberPieces()/2;
 	}
 	
+	// TODO : update this method
+	/**
+	 * Just a first basic version of the thread
+	 */
 	@Override
 	public void run() {
 		// locate last index reached (if reached)
@@ -73,17 +76,14 @@ public class FileDownloader implements Runnable {
 				continue;
 			}
 			
-		      // for each connected peer make a piece choice and:
-		      // ResponseObject obj = PeerConnection.sendRequest(file,pieceOffset...);
+	
+			// TODO: set up download speed using thread.sleep
 		    /* 
 			try{
-		    	  System.out.println("file downloader thread");
 		    	  Thread.sleep(100);
-		    	  // operation.addPiece....
-		    	  // FileTracker.updateBufferMap();
 		      }catch(Exception e){
 		        // ...
-		      }*/
+		     }*/
 		}
 		
 	}

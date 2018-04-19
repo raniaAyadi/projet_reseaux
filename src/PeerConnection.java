@@ -11,6 +11,12 @@ import java.util.Scanner;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 
+/**
+ * This class acts as an interface between the running application and other peers on the network,
+ * protocols are implemented in this class
+ * @author Hmama Adem
+ *
+ */
 public class PeerConnection extends Connection {
 
 	public PeerConnection(String ip, int port, FileTracker ft) throws Exception {

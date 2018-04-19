@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.BitSet;
 
@@ -13,12 +14,24 @@ import org.jasypt.util.password.ConfigurablePasswordEncryptor;
 
 /**
  * Classe Operation
- * Operation implémente les focntions opérationnelles indispensables comme des méthodes static
+ * Operation implémente les focntions opérationnelles indispensables comme des méthodes static,
+ * holds helper methods used by both server and client modules
  */
 
 public class Operation {
     private static final String ABC="a9zert0yuiop81qsdf2ghjkl3mw45xc6vb7n";
     
+    
+    public static boolean testAddress(String ip,int port){
+    	if(ip == null) return false;
+    	try{
+    		Socket s = new Socket(ip,port);
+    		s.close();
+    		return true;
+    	}catch (Exception e){
+    		return false;
+    	}
+    }
     
 	public static String bitsetToString(BitSet b,int size){
 		String ret = "";
@@ -51,6 +64,7 @@ public class Operation {
      * @return
      * @throws IOException
      */
+	@Deprecated
     public static String readInputStream(BufferedReader in) throws IOException {
     	int c;
     	String out = "";
@@ -59,6 +73,7 @@ public class Operation {
     	return out;
     }
     
+	@Deprecated
     public static String readPart(String filePath,int cutSize, int numPart) throws IOException {
 		BufferedInputStream in = new BufferedInputStream(new FileInputStream(new File(filePath)));
 		byte[] tab;
@@ -87,6 +102,7 @@ public class Operation {
      * @return le contenu de fichier
      * @throws IOException si le fichier n'existe pas
      */
+	@Deprecated
 	public static String readFile(String filePath) throws IOException {
 		BufferedInputStream in = new BufferedInputStream(new FileInputStream(new File(filePath)));
 		String out = "";
@@ -106,6 +122,7 @@ public class Operation {
 	 * @param algo l'algorihtme de hacahge
 	 * @return la clé
 	 */
+	@Deprecated
     public static String getKey(String s, String algo){
         ConfigurablePasswordEncryptor passwordEncryptor = new ConfigurablePasswordEncryptor();
         passwordEncryptor.setAlgorithm(algo);
@@ -113,5 +130,29 @@ public class Operation {
         String motDePasseChiffre = passwordEncryptor.encryptPassword(s.toString() );
         return motDePasseChiffre;
     }
+
+	public static boolean testListenPort(int port) {
+		try{
+			ServerSocket ss = new ServerSocket(port);
+			ss.close();
+			return true;
+		}catch(IOException e){
+			return false;
+		}
+	}
+
+	public static int generateValidListenPort() {
+		int index = 3000;
+		while(true){
+			try{
+				ServerSocket ss = new ServerSocket(index);
+				ss.close();
+				break;
+			}catch(IOException e ){
+				index++;
+			}
+		}
+		return index;
+	}
     
 }

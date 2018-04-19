@@ -9,7 +9,13 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class Connection {
+/**
+ * Abstract class providing basic tcp connection utilities like  establishing connection, sending request and other methods 
+ * useful for parsing responses
+ * @author Hmama Adem
+ *
+ */
+public abstract class Connection {
 	protected String ip;
 	protected int port;
 	protected BufferedInputStream is;
@@ -22,6 +28,12 @@ public class Connection {
 		this.port = port;
 	}
 	
+	/**
+	 * Establishes connection with server, sends a string formatted request, and sets up the inputStream
+	 * which will be parsed by the caller method depending on the protocol's expected response
+	 * @param request
+	 * @throws Exception
+	 */
 	protected void makeRequest(String request) throws Exception{
         soc = new Socket(ip,port);
         is = new BufferedInputStream(soc.getInputStream());
@@ -30,13 +42,17 @@ public class Connection {
 		writer.flush();
 	}
 	
+	/**
+	 * Free ressources
+	 * @throws Exception
+	 */
 	protected void endRequest() throws Exception{
 		is.close();
 		writer.close();
 		soc.close();
 	}
 
-	// read word and accept it
+	
 	protected  boolean accept(String word) throws Exception{
 		for(int i=0;i<word.length();i++){
 			int ret = is.read();
@@ -45,7 +61,7 @@ public class Connection {
 		return true;
 	}
 	
-	// accept word foating a a sea of spaces
+	
 	protected boolean acceptNext(String word) throws Exception{
 		escapeWhite();
 		if(!accept(word)) return false;
@@ -63,7 +79,7 @@ public class Connection {
 		}
 	}
 	
-	// or until the stream fucks up
+	
 	protected String readUntil(char c) throws Exception{
 		String res = "";
 		while(true){
@@ -95,7 +111,7 @@ public class Connection {
 	}
 	
 	protected char peekNext() throws Exception{
-		// TODO: if im peeking, read should not return -1, throw exception in case!
+		// TODO: if i'm peeking, read should not return -1, throw exception in case!
 		is.mark(2);
 		char c = (char) is.read();
 		is.reset();

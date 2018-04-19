@@ -53,13 +53,19 @@ public class FileTracker implements java.io.Serializable   {
 
 	/**
 	 * Constructor to start leeching a new file (generally gets called on user request for file download using a certain key)
-	 * In this case the piece size, total size, nb of pieces ... has to be passed as argumet, program must get this data from the Tracker
-	 * for each filetracker like this one, there should be a file download thread, which will constantly try to download the file content from other peers
-	 * @param fileName
-	 * @throws IOException 
+	 * In this case the piece size, total size, number of pieces ... has to be passed as argument, program must get this data from the Tracker
+	 * for each filetracker like this one, there should be a file downloader thread, which will constantly try to download the file content from other peers
+	 * 
+	 * @throws Exception 
 	 *
 	 */
-	public FileTracker(String fileName,long size, int pieceSize,String key,String path) throws IOException{
+	public FileTracker(String fileName,long size, int pieceSize,String key,String path) throws Exception{
+		this.filePath = path + File.separator + fileName;
+		File fl = new File(filePath);
+		if(fl.exists())
+			throw new Exception("file " + filePath + "already exists");
+		else
+			fl.createNewFile();
 		this.fileName = fileName;
 		this.size = size;
 		this.pieceSize = pieceSize;
@@ -69,22 +75,6 @@ public class FileTracker implements java.io.Serializable   {
 			numberPieces++;
 		bufferMap = new BitSet(numberPieces);
 		bufferMap.set(0,numberPieces,false);
-		// TODO: filePath
-		if(path != null){
-			this.filePath = path + File.separator + fileName;
-		}else{
-			if(Peer.downloadPath != null){
-				this.filePath = Peer.downloadPath + File.separator + fileName;
-			}else{
-				this.filePath = "." + fileName;
-			}
-		}
-		File fl = new File(filePath);
-		if(fl.exists())
-			fl.delete();
-		fl.createNewFile();
-			
-		
 	}
 
 
@@ -111,7 +101,7 @@ public class FileTracker implements java.io.Serializable   {
 
 
 
-	// delete me
+	// DEBUG
 	public void printBufferMap(){
 		System.out.println("bufferMap:");
 		for (int i = 0; i < numberPieces; i++) {

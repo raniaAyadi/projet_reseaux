@@ -11,8 +11,12 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Interface for all communication with tracker node
+ * @author Hmama Adem
+ *
+ */
 public class TrackerConnection extends Connection{
-
 
 	public TrackerConnection(String ip, int port) {
 		super(ip, port);
@@ -20,15 +24,11 @@ public class TrackerConnection extends Connection{
 
 
 	public  List<SimpleEntry<String , Integer>>  getfile(String key) throws Exception{
-		
 
 		String request = "getfile " + key; 
 		makeRequest(request);
-		
 		List<SimpleEntry<String, Integer>> ret = new ArrayList<>();
-		
-		
-
+	
 		acceptNext("peers");
 		String returnedKey = readUntil(' ');
 		if(!returnedKey.equals(key)){

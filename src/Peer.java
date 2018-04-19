@@ -33,42 +33,7 @@ public class Peer {
 	//private Client client;        // l'entité Client de Peer
 	private Config config;	// pour extraire les données de configuration
 
-	
-	// TODO: integrate these in the config 
-	public static Map<String, FileTracker> fileTrackers;
-	public static String metaPath;
-	public static String downloadPath;
-	public static String uploadPath;
-	public static TrackerConnection trackerConnection;
 
-	static {
-		fileTrackers = new HashMap<>();
-
-		// TODO: check for it in the configuration file, else default value is
-		// ./.meta
-		// in this case check for this directory
-		// and if it doesnt exit, create it
-		metaPath = "./.meta";
-		File fl = new File(metaPath);
-		if (!(fl.exists() && fl.isDirectory())) {
-			System.out.println("peer: static: error: metapath");
-			System.exit(0);
-		}
-
-		// TODO: check for download path in the configuration file, else set it
-		// to null
-		// the only us of download path is to set the filetracker path whithout
-		// promting the user for a path
-		downloadPath = "downloads_folder";
-
-		// TODO: check for it in the configuration file
-		// if it doesnt exits, then the upload listener will not be activated
-		uploadPath = "uploads_folder";
-		
-		// TODO : different ways to have the tracker details
-		trackerConnection = new TrackerConnection("127.0.0.1", 3000);
-
-	}
 
 	/**
 	 * Constructeur
@@ -107,17 +72,11 @@ public class Peer {
 		*/
 		
 	
-	
-		// init du client
-		new Thread(new PersistanceWorker()).start();
-		
-		// TODO: check for the uploadPath, if not null then instanciate a
-		// uploadListener thread
-		if (uploadPath != null)
-			new Thread(new UploadListener()).start();
+		(new Thread(new PersistanceWorker())).start();
+	    (new Thread(new UploadListener())).start();
 
 		
-		FakeServer.start(fileTrackers);
+		//FakeServer.start(fileTrackers);
   
 	}
 

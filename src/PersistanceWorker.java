@@ -14,15 +14,10 @@ import java.util.Set;
 
 /**
  * This worker thread persists application state throw serializing the
- * filetracker objects and saving them to disk on the .meta folder
+ * filetracker objects and saving them to disk on the metadata folder
  *
- * The second role is a feature, when
- * activated, the worker thread scan for untracked files in the download path
- * These files well become tracked, and the application will start the seed
- * these files to activate the feature, user must setup the Configuration file
- * accordinly
  *
- * @author Adem Hmama
+ * @author Hmama Adem
  * @version 1.0
  *
  */
@@ -38,13 +33,12 @@ public class PersistanceWorker implements Runnable {
 
 
 		// reload filetrackers from disk
-		File metaDir = new File(Peer.metaPath);
+		File metaDir = new File(MyConfig.metaPath);
 		for (File curr : metaDir.listFiles()) {
 			if (curr.isDirectory())
 				continue;
-			// TODO: more checking : check if the file has its own corresponding
-			// file in the download path
-			// ignore it if it doesn't end with .ser
+			// TODO: more error handling 
+			// like ignore it if it doesn't end with .ser
 			FileTracker ft = null;
 
 			try {
@@ -61,16 +55,11 @@ public class PersistanceWorker implements Runnable {
 				c.printStackTrace();
 				return;
 			}
-			Peer.fileTrackers.put(ft.getKey(), ft);
+			ApplicationContext.fileTrackers.put(ft.getKey(), ft);
 			BitSet b = ft.getBufferMap();
-			boolean seed = true;
-			for(int i =0;i< ft.getNumberPieces();i++){
-				if(!b.get(i))
-					seed = false;
-			}
-			if(!seed){
+			if(!ft.isSeeding())
 				(new Thread(new FileDownloader(ft))).start();
-			}
+				
 		}
 	}
 
@@ -79,7 +68,7 @@ public class PersistanceWorker implements Runnable {
 
 		while (true) {
 			// TODO: handel this in a better way, is the metaPath crutial, can this thread be shut down ??, should this thread
-			File fl = new File(Peer.metaPath);
+			File fl = new File(MyConfig.metaPath);
 			if(!fl.exists() || !fl.isDirectory()){ // user fucked up the meta directory while the app is running
 				System.err.println("persistance context : error .meta path not valid");
 				System.exit(0);
@@ -87,7 +76,7 @@ public class PersistanceWorker implements Runnable {
 
 			// print all current tracked files
 			System.out.println("tracked files:");
-			for (Map.Entry<String, FileTracker> entry : Peer.fileTrackers.entrySet()) {
+			for (Map.Entry<String, FileTracker> entry : ApplicationContext.fileTrackers.entrySet()) {
 				FileTracker ft = entry.getValue();
 				System.out.println(ft.getFileName());
 				System.out.println("piece size: " + ft.getPieceSize());
@@ -105,13 +94,13 @@ public class PersistanceWorker implements Runnable {
 				e.printStackTrace();
 			}
 
-			for (Map.Entry<String, FileTracker> entry : Peer.fileTrackers.entrySet()) {
+			for (Map.Entry<String, FileTracker> entry : ApplicationContext.fileTrackers.entrySet()) {
 				FileTracker fileTracker = entry.getValue();
 				if(fileTracker.isSeeding())
 					continue;
 				// serialize file tracker and store it in the .meta folder
 				try {
-					FileOutputStream fileOut = new FileOutputStream(Peer.metaPath + File.separator + fileTracker.getFileName() + ".ser");
+					FileOutputStream fileOut = new FileOutputStream(MyConfig.metaPath + File.separator + fileTracker.getFileName() + ".ser");
 					ObjectOutputStream out = new ObjectOutputStream(fileOut);
 					out.writeObject(fileTracker);
 					out.close();

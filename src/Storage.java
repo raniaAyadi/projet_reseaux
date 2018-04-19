@@ -2,13 +2,26 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.RandomAccessFile;
 
+/**
+ * Helper methods for trunk based file access, data is written/read in byte format 
+ * @author Hmama Adem
+ *
+ */
 public class Storage {
 
-	
-	public static byte[] readPiece(String filePath,long l,int pieceSize) throws Exception{
+	/**
+	 * If requested piece is the last piece in the file, chances are its size is less then pieceSize, in this case stuffing bits 
+	 * are added
+	 * @param filePath
+	 * @param offset
+	 * @param pieceSize
+	 * @return 
+	 * @throws Exception
+	 */
+	public static byte[] readPiece(String filePath,long offset,int pieceSize) throws Exception{
 		byte[] ret = new byte[pieceSize];
 		RandomAccessFile raf = new RandomAccessFile(filePath, "r");
-		raf.seek(l);
+		raf.seek(offset);
 		raf.read(ret);
 		raf.close();
 		return ret;

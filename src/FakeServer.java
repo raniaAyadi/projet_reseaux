@@ -9,20 +9,20 @@ import java.net.Socket;
 import java.util.BitSet;
 import java.util.Map;
 
+/**
+ * Fake server used just to test fileDownloader (until Server is integrated)
+ * @author Hmama Adem
+ *
+ */
 public class FakeServer {
 	public static void start(Map<String, FileTracker> fileTrackers) throws Exception{
-		// fake file server
 		ServerSocket s = new ServerSocket(3001);
-
 		while (true) {
 			Socket soc = s.accept();
 			System.out.println("client connected");
-
 			BufferedReader plec = new BufferedReader(new InputStreamReader(soc.getInputStream()));
 			OutputStream os = soc.getOutputStream();
 			PrintWriter pred = new PrintWriter(new BufferedWriter(new OutputStreamWriter(os)), true);
-
-			
 			String request = plec.readLine();
 			String res= new String("");
 			String[] req = request.split(" ");
@@ -32,11 +32,7 @@ public class FakeServer {
 				}else{
 					String requestedKey = req[1];
 					if(fileTrackers.containsKey(requestedKey)){
-						// write directly
 						pred.write("have " + requestedKey + " ");
-						
-						
-						// write the buffermap
 						FileTracker resp = fileTrackers.get(requestedKey);
 						BitSet buffermap = resp.getBufferMap();
 						pred.write(Operation.bitsetToString(buffermap, resp.getNumberPieces()));
@@ -44,7 +40,7 @@ public class FakeServer {
 						soc.close();
 						continue;
 					}else{
-						res = "i dont serve this file";
+						res = "i dont serve this shit";
 					}
 				}
 			}else if(req[0].equals("getpieces")){
@@ -67,7 +63,6 @@ public class FakeServer {
 						pred.flush();
 						int pieceIndex = Integer.parseInt(ls[i]);
 						if(pieceIndex >= fileTrackers.get(key).getSize()){
-							// invalid index requested 
 							System.out.println("peer requested an invalid index : " + pieceIndex);
 							System.out.println("returing a string of spaces");
 						}
@@ -86,9 +81,6 @@ public class FakeServer {
 			}else{
 				res = "unregonized command";
 			}
-		
-			
-
 			pred.write(res);
 			pred.flush();
 			soc.close();
