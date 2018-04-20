@@ -23,10 +23,7 @@ public class UserAction {
 		if(path == null)
 			path = ".";
 		FileTracker ft = new FileTracker(fileName, size, pieceSize, key, path);
-		ApplicationContext.fileTrackers.put(ft.getKey(), ft);
-		Thread th = new Thread(new FileDownloader(ft));
-		ApplicationContext.fileDownloaders.put(ft.getKey(), th);
-		th.start();
+		ApplicationContext.addFileTracker(ft);	
 	}
 	
 	public static void listFilesOnNetwork(){
@@ -34,35 +31,43 @@ public class UserAction {
 	}
 	
 	public static void getCurrentStats(){
-		// TODO
+		// TODO: first: implement the FileStat data structure
 	}
 	
 	
 	/**
-	 * Stop downloading the file, get it off my download list
+	 * Stop leeching/seeding 
 	 */
-	public static void stopLeech(){
-		// TODO
-	}
-	public static void pauseLeech(String key){
-		if(!ApplicationContext.fileDownloaders.containsKey(key)){
-			System.out.println("requesting suspend for a non existing key + "+ key); // jsut for debug
-			return;
+	public static void removeFile(Integer id){
+		if(ApplicationContext.fileDownloaders.containsKey(id)){
+			ApplicationContext.fileDownloaders.get(id).stop();
 		}
-		ApplicationContext.fileDownloaders.get(key).suspend();
+		ApplicationContext.removeFileTracker(id);
+		// TODO : ask the user if he wants to delete the file from the disk too (in case of non seeded file)	
+		// TODO what about when the file is uploaded using the upload listener, should i delete the file from the upload directory ?
+		// or is it simply no problem (bug in upload listener fixed by <added> set
 	}
 	
-	public static void resumeLeech(String key){
-		if(!ApplicationContext.fileDownloaders.containsKey(key)){
-			System.out.println("requesting resume for a non existing key + "+ key); // jsut for debug
+	public static void pauseLeech(Integer id){
+		if(!ApplicationContext.fileDownloaders.containsKey(id)){
+			System.out.println("requesting suspend for a non existing key + "+ id); // TODO : verbosity controle
 			return;
 		}
-		ApplicationContext.fileDownloaders.get(key).resume();
+		ApplicationContext.fileDownloaders.get(id).pause();
+	}
+	
+	public static void resumeLeech(Integer id){
+		if(!ApplicationContext.fileDownloaders.containsKey(id)){
+			System.out.println("requesting resume for a non existing key + "+ id); // just for debug
+			return;
+		}
+		ApplicationContext.fileDownloaders.get(id).resume();
 	}
 	
 	// user calls this method, gets file metadata from the file tracker, then starts download using startLeech
 	public static void searchFile(){
-		// TODO:  queries to find target file key  
+		// TODO: queries to find target file key  
+		// TODO: first implement response object
 	}
 	
 }

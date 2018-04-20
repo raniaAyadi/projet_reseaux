@@ -15,8 +15,12 @@ public class FileDownloader implements Runnable {
 	
 	private FileTracker ft;
 	private List<PeerConnection> connections;
+	private boolean suspend;
+	private boolean endThread;
 	
 	FileDownloader(FileTracker ft) throws Exception{
+		suspend = false;
+		endThread = false;
 		this.ft = ft;
 		connections = new ArrayList<>();
 		List<SimpleEntry<String , Integer>> ret =  ApplicationContext.trackerConnection.getfile(ft.getKey());
@@ -60,6 +64,19 @@ public class FileDownloader implements Runnable {
 		int nb_conns = connections.size();
 		// TODO: treat case where there are no connections
 		while(!ft.isSeeding()){
+			if(endThread){
+				break;
+			}
+			if(suspend){
+				try {
+					Thread.sleep(3000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				continue;
+			}
+			
 			// select next connection to use
 			connIndex = (connIndex+1) %nb_conns;
 			PeerConnection con = connections.get(connIndex);
@@ -77,7 +94,7 @@ public class FileDownloader implements Runnable {
 			}
 			
 	
-			// TODO: set up download speed using thread.sleep
+			// TODO: set up download speed using thread.sleep ? => no use nb_down_max (attribute in filetracker)
 		    /* 
 			try{
 		    	  Thread.sleep(100);
@@ -85,9 +102,20 @@ public class FileDownloader implements Runnable {
 		        // ...
 		     }*/
 		}
-		// download terminated, thread stops
-		ApplicationContext.fileDownloaders.remove(ft.getKey());
-		
+		// automatically removes himself when terminated from list of downloads
+		ApplicationContext.fileDownloaders.remove(ft.id);
+	}
+
+	public void pause() {
+		suspend = true;
+	}
+	
+	public void resume(){
+		suspend = false;
+	}
+	
+	public void stop(){
+		endThread = true;
 	}
 	
 }

@@ -68,6 +68,7 @@ public class PeerConnection extends Connection {
 			if(nb != ft.getPieceSize()){
 				// TODO: error from the other peer
 				System.out.println("error when reading data at index: " + index);
+				System.out.println("read " + nb +" bytes instead of " + ft.getPieceSize() + " (piece size)");
 			}
 			ret.put(index, data);
 		}

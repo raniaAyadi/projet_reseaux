@@ -55,15 +55,7 @@ public class PersistanceWorker implements Runnable {
 				c.printStackTrace();
 				return;
 			}
-			ApplicationContext.fileTrackers.put(ft.getKey(), ft);
-			BitSet b = ft.getBufferMap();
-			if(!ft.isSeeding()){
-				Thread th = new Thread(new FileDownloader(ft));
-				ApplicationContext.fileDownloaders.put(ft.getKey(), th);
-				th.start();
-			}
-				
-				
+			ApplicationContext.addFileTracker(ft);	
 		}
 	}
 
