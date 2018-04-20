@@ -37,7 +37,7 @@ public class MyConfig {
 	public static String downloadPath;
 	public static String uploadPath;
 
-	private static Properties propreties;
+	public static Properties propreties;
 	private static String CONFIG_FILE_NAME = "config.properties"; // default
 
 	/**

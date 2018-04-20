@@ -41,7 +41,7 @@ public class FileTracker implements java.io.Serializable   {
 			this.fileName = fileName;
 			size  =  (new File(filePath)).length();
 			// TODO: if file size is too big, piece size should be also bigger that this value
-			pieceSize = 4;
+			pieceSize = generatePieceSize(size);
 			key = (new BasicPasswordEncryptor()).encryptPassword(fileName);	
 			numberPieces = (int) (size/pieceSize);
 			if((size%pieceSize) !=0 )
@@ -78,7 +78,7 @@ public class FileTracker implements java.io.Serializable   {
 	}
 
 
-	public void addPiece(byte[]piece,int pieceIndex) throws Exception{
+	public void addPiece(byte[]piece,int pieceIndex) {
 		// trim the fat in case of last piece
 		if(pieceIndex == (numberPieces -1)){
 			int chunksize = (int) (pieceSize - (numberPieces*pieceSize - size)) ;
@@ -95,11 +95,40 @@ public class FileTracker implements java.io.Serializable   {
 		return Storage.readPiece(filePath, pieceIndex*pieceSize, pieceSize);
 	}
 
+
 	public boolean isSeeding(){
 		return bufferMap.cardinality() == numberPieces;
 	}
 
-
+	/**
+	 * Piece size must be proportinal to total size, going from 16kb min to 16384kb (copycat utorrent implementation)
+	 * @param size
+	 * @return
+	 */
+	private int generatePieceSize(long size){
+		int KB = 1024;
+		int MB = 1024*KB;
+		String confVal = MyConfig.propreties.getProperty("piece-size");
+		if(confVal != null){
+			try{
+				int ret =  Integer.parseInt(confVal);
+				if(!(ret >= 64 && ret <= MB))
+					throw new Exception();
+				return ret;
+			}catch(Exception e){
+				System.out.println("warning, invalid piece size specified in config file");
+			}
+		}
+	
+		if(size < 2*MB)    return 64; // TODO: remove this, i've added it just for testing
+		if(size < 10*MB)   return 16*KB;
+		if(size < 100*MB)  return 64*KB;
+		if(size < 500*MB)  return  128*KB;
+		if(size < 800*MB)  return 256*KB;
+		if(size < 1024*MB) return 512*KB;
+		return MB;
+	}
+	
 
 	// DEBUG
 	public void printBufferMap(){

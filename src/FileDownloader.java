@@ -85,6 +85,8 @@ public class FileDownloader implements Runnable {
 		        // ...
 		     }*/
 		}
+		// download terminated, thread stops
+		ApplicationContext.fileDownloaders.remove(ft.getKey());
 		
 	}
 	

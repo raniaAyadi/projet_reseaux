@@ -57,8 +57,12 @@ public class PersistanceWorker implements Runnable {
 			}
 			ApplicationContext.fileTrackers.put(ft.getKey(), ft);
 			BitSet b = ft.getBufferMap();
-			if(!ft.isSeeding())
-				(new Thread(new FileDownloader(ft))).start();
+			if(!ft.isSeeding()){
+				Thread th = new Thread(new FileDownloader(ft));
+				ApplicationContext.fileDownloaders.put(ft.getKey(), th);
+				th.start();
+			}
+				
 				
 		}
 	}
@@ -74,16 +78,14 @@ public class PersistanceWorker implements Runnable {
 				System.exit(0);
 			}
 
-			// print all current tracked files
-			System.out.println("tracked files:");
+			// log all current tracked files
+			System.out.format("\n\n  %-15s%-10s%-15s%-25s\n", "filename", "size", "piece-size", "key");
+			System.out.println("  ==============================================================");
 			for (Map.Entry<String, FileTracker> entry : ApplicationContext.fileTrackers.entrySet()) {
 				FileTracker ft = entry.getValue();
-				System.out.println(ft.getFileName());
-				System.out.println("piece size: " + ft.getPieceSize());
-				System.out.println("size: " + ft.getSize());
-				System.out.println("key: " + ft.getKey());
-				System.out.println("key: " + ft.getKey());
-				ft.printBufferMap();
+				System.out.format("  %-15s%-10s%-5s%-20s\n", ft.getFileName(), ft.getSize(), ft.getPieceSize(),
+						ft.getKey());
+
 			}
 
 			// sleep
@@ -96,8 +98,10 @@ public class PersistanceWorker implements Runnable {
 
 			for (Map.Entry<String, FileTracker> entry : ApplicationContext.fileTrackers.entrySet()) {
 				FileTracker fileTracker = entry.getValue();
-				if(fileTracker.isSeeding())
-					continue;
+				// TODO: if file is seeding and it has been persisted at least once after it got to this state, dont persist it again
+				// add boolean in file tracker
+				
+				
 				// serialize file tracker and store it in the .meta folder
 				try {
 					FileOutputStream fileOut = new FileOutputStream(MyConfig.metaPath + File.separator + fileTracker.getFileName() + ".ser");

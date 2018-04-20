@@ -35,9 +35,10 @@ public class Storage {
 				raf.seek(offset);
 				raf.write(piece);
 				raf.close();
+
 				break;
 			}catch (Exception e){
-				System.out.println("File write failer, file is used by another process");
+				System.out.println("File write failur, file is used by another process");
 			}
 		}
 	

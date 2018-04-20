@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class-diagram version="1.2.2" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+  associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
+  <class id="1" language="java" name="App" project="projet-res" file="/projet-res/src/App.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="99" width="113" x="264" y="278"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="2" language="java" name="MyConfig" project="projet-res" file="/projet-res/src/MyConfig.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="217" y="1350"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="3" language="java" name="FakeServer" project="projet-res" file="/projet-res/src/FakeServer.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="297" y="1054"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="4" language="java" name="PeerConnection" project="projet-res" file="/projet-res/src/PeerConnection.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="2210" y="823"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="5" language="java" name="Operation" project="projet-res" file="/projet-res/src/Operation.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="882" y="1399"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="6" language="java" name="FileTracker" project="projet-res" file="/projet-res/src/FileTracker.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1378" y="1190"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="7" language="java" name="UploadListener" project="projet-res" file="/projet-res/src/UploadListener.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="99" width="110" x="109" y="278"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="8" language="java" name="PersistanceWorker" project="projet-res" 
+    file="/projet-res/src/PersistanceWorker.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="117" width="136" x="398" y="85"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="9" language="java" name="ApplicationContext" project="projet-res" 
+    file="/projet-res/src/ApplicationContext.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="883" y="759"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="10" language="java" name="Storage" project="projet-res" file="/projet-res/src/Storage.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1888" y="1319"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="11" language="java" name="UserAction" project="projet-res" file="/projet-res/src/UserAction.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="153" width="236" x="638" y="85"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="12" language="java" name="Connection" project="projet-res" file="/projet-res/src/Connection.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1856" y="455"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="13" language="java" name="TrackerConnection" project="projet-res" 
+    file="/projet-res/src/TrackerConnection.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1455" y="651"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="14" language="java" name="FileDownloader" project="projet-res" file="/projet-res/src/FileDownloader.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1405" y="334"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <dependency id="15">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="5"/>  
+  </dependency>  
+  <dependency id="16">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="3"/>  
+  </dependency>  
+  <association id="17">    
+    <end type="SOURCE" refId="9" navigable="false">      
+      <attribute id="18" name="trackerConnection"/>      
+      <multiplicity id="19" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="13" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <dependency id="20">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <dependency id="21">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="9"/>  
+  </dependency>  
+  <generalization id="22">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="12"/>  
+  </generalization>  
+  <dependency id="23">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="6"/>  
+  </dependency>  
+  <dependency id="24">    
+    <bendpoint x="964" y="278"/>    
+    <bendpoint x="964" y="633"/>    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="6"/>  
+  </dependency>  
+  <dependency id="25">    
+    <bendpoint x="358" y="826"/>    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="5"/>  
+  </dependency>  
+  <dependency id="26">    
+    <bendpoint x="76" y="278"/>    
+    <bendpoint x="76" y="633"/>    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <dependency id="27">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="14"/>  
+  </dependency>  
+  <dependency id="28">    
+    <bendpoint x="586" y="278"/>    
+    <bendpoint x="586" y="633"/>    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="6"/>  
+  </dependency>  
+  <dependency id="29">    
+    <bendpoint x="607" y="278"/>    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="9"/>  
+  </dependency>  
+  <association id="30">    
+    <end type="SOURCE" refId="9" navigable="false">      
+      <attribute id="31" name="fileTrackers"/>      
+      <multiplicity id="32" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="6" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <dependency id="33">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="10"/>  
+  </dependency>  
+  <generalization id="34">    
+    <bendpoint x="1006" y="633"/>    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="12"/>  
+  </generalization>  
+  <association id="35">    
+    <end type="SOURCE" refId="14" navigable="false">      
+      <attribute id="36" name="connections"/>      
+      <multiplicity id="37" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="4" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <dependency id="38">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="6"/>  
+  </dependency>  
+  <association id="39">    
+    <bendpoint x="607" y="633"/>    
+    <end type="SOURCE" refId="14" navigable="false">      
+      <attribute id="40" name="ft"/>      
+      <multiplicity id="41" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="6" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <dependency id="42">    
+    <bendpoint x="97" y="633"/>    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <dependency id="43">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="9"/>  
+  </dependency>  
+  <dependency id="44">    
+    <bendpoint x="985" y="633"/>    
+    <end type="SOURCE" refId="14"/>    
+    <end type="TARGET" refId="13"/>  
+  </dependency>  
+  <dependency id="45">    
+    <bendpoint x="407" y="278"/>    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="9"/>  
+  </dependency>  
+  <dependency id="46">    
+    <end type="SOURCE" refId="14"/>    
+    <end type="TARGET" refId="9"/>  
+  </dependency>  
+  <dependency id="47">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="14"/>  
+  </dependency>  
+  <dependency id="48">    
+    <bendpoint x="118" y="633"/>    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="6"/>  
+  </dependency>  
+  <classifier-display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+    sort-features="false" accessors="true" visibility="true">    
+    <attributes public="true" package="true" protected="true" private="true" static="true"/>    
+    <operations public="true" package="true" protected="true" private="true" static="true"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>

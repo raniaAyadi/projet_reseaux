@@ -32,9 +32,11 @@ public abstract class Connection {
 	 * Establishes connection with server, sends a string formatted request, and sets up the inputStream
 	 * which will be parsed by the caller method depending on the protocol's expected response
 	 * @param request
+	 * @throws IOException 
+	 * @throws UnknownHostException 
 	 * @throws Exception
 	 */
-	protected void makeRequest(String request) throws Exception{
+	protected void makeRequest(String request) throws UnknownHostException, IOException {
         soc = new Socket(ip,port);
         is = new BufferedInputStream(soc.getInputStream());
 		writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(soc.getOutputStream())), true);	
@@ -44,32 +46,34 @@ public abstract class Connection {
 	
 	/**
 	 * Free ressources
+	 * @throws IOException 
 	 * @throws Exception
 	 */
-	protected void endRequest() throws Exception{
+	protected void endRequest() throws IOException {
 		is.close();
 		writer.close();
 		soc.close();
 	}
 
 	
-	protected  boolean accept(String word) throws Exception{
+	protected  void accept(String word) throws ProtocolException, IOException{
+		String found = "";
 		for(int i=0;i<word.length();i++){
 			int ret = is.read();
-			if(ret == -1 || ((char) ret)!=word.charAt(i)) return false;
+			found +=(char ) ret	;
+			if(ret == -1 || ((char) ret)!=word.charAt(i)) 
+				throw new ProtocolException("Expecting token <" + word+">, found: <" + found+">");
 		}
-		return true;
 	}
 	
 	
-	protected boolean acceptNext(String word) throws Exception{
+	protected void acceptNext(String word) throws ProtocolException, IOException{
 		escapeWhite();
-		if(!accept(word)) return false;
+		accept(word);
 		escapeWhite();
-		return true;
 	}
 	
-	protected  void escapeWhite() throws Exception{
+	protected  void escapeWhite() throws IOException {
 		while(true){
 			is.mark(2); 
 			char c = (char ) is.read();
@@ -80,7 +84,7 @@ public abstract class Connection {
 	}
 	
 	
-	protected String readUntil(char c) throws Exception{
+	protected String readUntil(char c) throws IOException {
 		String res = "";
 		while(true){
 			is.mark(2);
@@ -96,11 +100,11 @@ public abstract class Connection {
 		return res;
 	}
 	
-	protected String readUntil(char a,char b) throws Exception{
+	protected String readUntil(char a,char b) throws IOException {
 		String res = "";
 		while(true){
 			is.mark(2);
-			char k = (char ) is.read();
+			char k = (char ) is.read(); 
 			if(k == a || k == b) {
 				is.reset();
 				break;
@@ -110,7 +114,7 @@ public abstract class Connection {
 		return res;
 	}
 	
-	protected char peekNext() throws Exception{
+	protected char peekNext() throws IOException {
 		// TODO: if i'm peeking, read should not return -1, throw exception in case!
 		is.mark(2);
 		char c = (char) is.read();

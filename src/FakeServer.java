@@ -15,8 +15,8 @@ import java.util.Map;
  *
  */
 public class FakeServer {
-	public static void start(Map<String, FileTracker> fileTrackers) throws Exception{
-		ServerSocket s = new ServerSocket(3001);
+	public static void start(Map<String, FileTracker> fileTrackers,int port) throws Exception{
+		ServerSocket s = new ServerSocket(port);
 		while (true) {
 			Socket soc = s.accept();
 			System.out.println("client connected");

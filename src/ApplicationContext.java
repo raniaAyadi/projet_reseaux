@@ -8,12 +8,15 @@ import java.util.Map;
  */
 public class ApplicationContext {
 	public static Map<String, FileTracker> fileTrackers;
+	public static Map<String, Thread> fileDownloaders; // needed for pause/resume functionality
 	public static TrackerConnection trackerConnection;
+	
 	
 	
 	public ApplicationContext( String[] args) throws Exception {
 		MyConfig.init(args); 
 		fileTrackers = new HashMap<>();
+		fileDownloaders = new HashMap<>();
 		trackerConnection = new TrackerConnection(MyConfig.trackerIp, MyConfig.trackerPort);
 		
 		// persist application state

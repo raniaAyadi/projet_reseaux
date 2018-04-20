@@ -1,7 +1,9 @@
 import java.awt.SecondaryLoop;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.BitSet;
 import java.util.HashMap;
@@ -37,7 +39,7 @@ public class PeerConnection extends Connection {
 	}
 	private BitSet bufferMap; // the bitmap of the file in the
 
-	
+	// TODO: handel io/protocole exception at this level !! also all the other methods and the trackerconnection methods
 	public Map<Integer, byte[]> getpieces( List<Integer> offsets,FileTracker ft) throws Exception {
 		Map<Integer, byte[]> ret = new HashMap<>();
 		
@@ -73,6 +75,26 @@ public class PeerConnection extends Connection {
 		return ret;
 	}
 	
+	/**
+	 * Not yet tested!
+	 * send your buffer map and get the other peer's buffer map in response
+	 * @param myBufferMap
+	 * @return
+	 * @throws IOException 
+	 * @throws UnknownHostException 
+	 * @throws ProtocolException 
+	 */
+	public String have(String myBufferMap,String key) throws UnknownHostException, IOException, ProtocolException{
+		String req = "have " + key + " " + myBufferMap;
+		makeRequest(req);
+		acceptNext("have");
+		readUntil(' ');
+		escapeWhite();
+		String ret = readUntil(' ');
+		escapeWhite();
+		endRequest();
+		return ret;
+	}
 
 	// interested
 	private void updateBufferMap(FileTracker ft) throws Exception {
