@@ -5,19 +5,19 @@ import java.util.regex.Pattern;
 
 /**
  * Classe Decoder
- * Decoder est une classe abstraite pour décoder un message
+ * Decoder est une classe abstraite pour dï¿½coder un message
  */
 
 public abstract class Request {
 	
-	protected String in;            	   // le message à décoder
+	protected String in;            	   // le message ï¿½ dï¿½coder
 	protected Map<String, Object> fields;  // dictionnaire des champs
-	protected Pattern reg;                 // l'expression régulière
+	protected Pattern reg;                 // l'expression rï¿½guliï¿½re
 	protected Matcher matcher;             // pour analyser le message
-	protected String exp;                  // la chaine qui décrit reg                  
+	protected String exp;                  // la chaine qui dï¿½crit reg                  
 	/**
 	 * 
-	 * @param in le message à décoder 
+	 * @param in le message ï¿½ dï¿½coder 
 	 * @throws ProtocolException 
 	 */
 	public Request(String in) throws ProtocolException  {
@@ -34,32 +34,32 @@ public abstract class Request {
 	}
 	
 	/**
-	 * C'est la classe fille, concrète, qui définit l'expression régulière
+	 * C'est la classe fille, concrï¿½te, qui dï¿½finit l'expression rï¿½guliï¿½re
 	 */
 	protected abstract void setExp();
 	
 	private final void setFields(){
-		fields = new HashMap();
+		fields = new HashMap<String, Object>();
 		putFields();
 	}
 	
 	/**
-	 * Lire un champ identifiée par son nom 
-	 * @param key le nom de la propriété à lire
-	 * @return value = null si le clé n'existe pas
+	 * Lire un champ identifiï¿½e par son nom 
+	 * @param key le nom de la propriï¿½tï¿½ ï¿½ lire
+	 * @return value = null si le clï¿½ n'existe pas
 	 */
 	public Object getField(String key) {
 		return this.fields.get(key);
 	}
 	
 	/**
-	 * méthode abstraite
+	 * mï¿½thode abstraite
 	 * remplir le dictionanire fields
 	 */
 	protected abstract void putFields();
 	
 	/**
-	 * Vérfiier si le message est conforme au protocole, sinon une exception est levée
+	 * Vï¿½rfiier si le message est conforme au protocole, sinon une exception est levï¿½e
 	 * @throws ProtocolException
 	 */
 	private void verify() throws ProtocolException {

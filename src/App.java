@@ -1,12 +1,10 @@
-import java.util.HashMap;
-import java.util.Map;
-
 public class App {
 
 
 	
 	public static void main(String[] args) throws Exception {
 		
+		@SuppressWarnings("unused")
 		ApplicationContext ctx = new ApplicationContext( args);
 		
 		// to test file downlaoder

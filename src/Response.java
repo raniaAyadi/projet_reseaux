@@ -4,11 +4,9 @@ import java.util.Map;
 abstract public class Response {
 	protected Map<String, Object> fields;   // input
 	protected String message; 			  // output
-	protected Config config;
 	
 	public Response(Map<String, Object> fields) throws ProtocolException, IOException {
 		this.fields = fields;
-		this.config = Config.getInstance();
 		
 		verify();		
 		setMessage();

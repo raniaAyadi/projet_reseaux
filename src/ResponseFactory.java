@@ -5,7 +5,7 @@ import java.util.Map;
 public class ResponseFactory {
 	
 	public static Response createResponse(String className, Map<String, Object> fields) throws ProtocolException {
-		Class c = null;
+		Class<?> c = null;
 		try {
 			c = Class.forName(className);
 		} catch (ClassNotFoundException e) {
@@ -13,7 +13,7 @@ public class ResponseFactory {
 			return null;
 		}
 		
-		Constructor ct;
+		Constructor<?> ct;
 		try {
 			ct = c.getConstructor(Map.class);
 		} catch (NoSuchMethodException | SecurityException e) {

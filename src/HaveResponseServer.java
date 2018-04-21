@@ -14,21 +14,23 @@ public class HaveResponseServer extends Response {
 	protected void verify() throws ProtocolException {
 		String key = (String) this.fields.get(Constant.Config.KEY);
 		String bufferMap = (String) this.fields.get(Constant.Config.BUFFER_MAP);
+		Map<String, FileTracker> l = ApplicationContext.fileTrackers;
 		
-		if(config.getKey(key) == false){
-			throw new ProtocolException("Vérfier la clé "+key);
+		if(l.containsKey(key) == false){
+			throw new ProtocolException("Vï¿½rfier la clï¿½ "+key);
 		}
 		
-		String bufferFile = this.config.getField(key, Constant.Config.BUFFER_MAP);
+		FileTracker m = l.get(key);
+		String bufferFile = Operation.bitsetToString(m.getBufferMap());
 		if(bufferFile.length() != bufferMap.length()) {
-			throw new ProtocolException("Vérifier le buffer Map "+bufferMap);
+			throw new ProtocolException("Vï¿½rifier le buffer Map "+bufferMap);
 		}
 	}
 
 	@Override
 	protected void setMessage() throws IOException {
 		String key = (String) this.fields.get(Constant.Config.KEY);
-		String bufferMap = config.getField(key, Constant.Config.BUFFER_MAP);
+		String bufferMap = Operation.bitsetToString(ApplicationContext.fileTrackers.get(key).getBufferMap());
 		
 		this.message = HAVE + SEP + key + SEP + bufferMap;
 	}

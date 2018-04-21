@@ -1,8 +1,6 @@
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.logging.Level;
@@ -11,28 +9,26 @@ import java.util.logging.Logger;
 
 /**
  * Classe ServerThread
- * ServerThread hérite la classe Thread
- * un serverThread est associé à une connexion particulière identifiée par un socket passé en paramètre
+ * ServerThread hï¿½rite la classe Thread
+ * un serverThread est associï¿½ ï¿½ une connexion particuliï¿½re identifiï¿½e par un socket passï¿½ en paramï¿½tre
  */
 
 public class ServerThread extends Thread {
 	private Socket socket ;     
 	private Integer numClient;    
 	private Logger log;           
-	private Config config;
 	PrintWriter out;
 	BufferedReader in;
-	String lastMessage;       // Utile pour relire le dernier message sans attendre le flux d'entrée
+	String lastMessage;       // Utile pour relire le dernier message sans attendre le flux d'entrï¿½e
 	/**
 	 * 
 	 * @param socket docket du client
-	 * @param numClient le numéro du client
+	 * @param numClient le numï¿½ro du client
 	 * @throws IOException
 	 */
 	public ServerThread(Socket socket, Integer numClient) throws IOException{
 		this.socket = socket;
 		this.numClient = numClient;
-		this.config = Config.getInstance();
 		
     	this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		this.out = new PrintWriter(this.socket.getOutputStream());
@@ -43,7 +39,7 @@ public class ServerThread extends Thread {
 	
 	/**
 	 * 
-	 * @param className pour instancier la classe concrète en applelant le fabriquant
+	 * @param className pour instancier la classe concrï¿½te en applelant le fabriquant
 	 * @param readOver = true pour imposer la relecture de flux, sinon l'attente d'un nouveau message
 	 * @return instance de la classe className
 	 * @throws IOException
@@ -55,19 +51,19 @@ public class ServerThread extends Thread {
 		
 		if(readOver == true) {
 			if(lastMessage == null) {
-				throw new IOException("Pas de message à relire !");
+				throw new IOException("Pas de message ï¿½ relire !");
 			}
 			message = lastMessage;
 		}
 		else {
-			message = Operation.readInputStream(in);
+			message = in.readLine();
 			log.log(Level.INFO, "Message received is : " + message);
 			this.lastMessage = message;
 		}
 		
 		Request req = RequestFactory.createRequest(className, message);
 		if(req == null) {
-			//A préciser l'exception (ClassNotFoundEception, etc)
+			//A prï¿½ciser l'exception (ClassNotFoundEception, etc)
 			throw new IOException();
 		}
 		
@@ -84,9 +80,9 @@ public class ServerThread extends Thread {
 	}
 	
 	/**
-	 * Cette méthode permet de communiquer avec le client selon sa requete d'initialisation
-	 * Deux scénarios possibles 
-	 * Soit le client demande le téléchargement d'un fichier 
+	 * Cette mï¿½thode permet de communiquer avec le client selon sa requete d'initialisation
+	 * Deux scï¿½narios possibles 
+	 * Soit le client demande le tï¿½lï¿½chargement d'un fichier 
 	 * @see protocoleDownload()
 	 * Soit le client demande l'etat d'un fichier
 	 * @see protocolInformations

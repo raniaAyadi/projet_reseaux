@@ -1,4 +1,3 @@
-import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -9,31 +8,29 @@ import java.util.logging.Logger;
 
 /**
  * Classe Server
- * Server hérite Thread pour s'éxécuter en parallèle avec un Client
- * un server se caractèrise un numéro de port, sur lequel il est en écoute permanente 
+ * Server hï¿½rite Thread pour s'ï¿½xï¿½cuter en parallï¿½le avec un Client
+ * un server se caractï¿½rise un numï¿½ro de port, sur lequel il est en ï¿½coute permanente 
  */
 
-public class Server extends Thread {
+public class Server implements Runnable {
 	
 	private ServerSocket serverSocket;        // le socket de serveur
-	private Integer portNum;                  // passé en paramètre dés l'initialisation
-	private Logger log;                       // pour le débogage
-	private List<ServerThread> threadList ;   // enregistrer la liste des thread associé à chaque connexion (client)
+	private Integer portNum;                  // passï¿½ en paramï¿½tre dï¿½s l'initialisation
+	private Logger log;                       // pour le dï¿½bogage
+	private List<ServerThread> threadList ;   // enregistrer la liste des thread associï¿½ ï¿½ chaque connexion (client)
 	
 	
 	/**
 	 * Constructeur
-	 * @param portNum numéro de port
+	 * @param portNum numï¿½ro de port
 	 */
 	public Server(Integer portNum){
 		this.log = Logger.getLogger(this.getClass().getName());
 		this.portNum = portNum;
-		this.threadList = new ArrayList(); 
+		this.threadList = new ArrayList<ServerThread>(); 
 		listen();
 	}
-	
-	// TODO public Seeder(File* f);
-	
+		
 	/**
 	 * Initialisation du serverSocket
 	 */
@@ -48,7 +45,7 @@ public class Server extends Thread {
 	}
 	
 	/**
-	 * Etablissement d'une connexion en passant la socket à un thread traitant (ServerThread)
+	 * Etablissement d'une connexion en passant la socket ï¿½ un thread traitant (ServerThread)
 	 */
 	private void connect(){
 		Socket socket;
@@ -67,7 +64,7 @@ public class Server extends Thread {
 	}
 	
 	/**
-	 * redéfinition de la méthode run de Thread pour lancer le thread
+	 * redï¿½finition de la mï¿½thode run de Thread pour lancer le thread
 	 */
 	public void run(){
 		log.log(Level.INFO, Thread.currentThread().getName());

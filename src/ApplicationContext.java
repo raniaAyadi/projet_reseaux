@@ -37,6 +37,7 @@ public class ApplicationContext {
 		fileDownloaders = new HashMap<>();
 		idMapper = new HashMap<>();
 		trackerConnection = new TrackerConnection(MyConfig.trackerIp, MyConfig.trackerPort);
+		Server server = new Server(MyConfig.listenPort);
 		
 		// persist application state
 		(new Thread(new PersistanceWorker())).start();
@@ -45,8 +46,8 @@ public class ApplicationContext {
 		if(MyConfig.uploadPath != null)
 			(new Thread(new UploadListener())).start();
 		
-		// TODO: start the server
-
+		//start the server
+		(new Thread(server)).start();
 	}
 
 

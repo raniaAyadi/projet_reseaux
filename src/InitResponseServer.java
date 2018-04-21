@@ -1,10 +1,9 @@
-import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
 /**
  * Classe InitResponse
- * vérifie la validité de la requete, passée en paramètre, et construit le message à envoyer
+ * vï¿½rifie la validitï¿½ de la requete, passï¿½e en paramï¿½tre, et construit le message ï¿½ envoyer
  */
 public class InitResponseServer extends Response {
 	public static final String HAVE = "have";
@@ -18,15 +17,15 @@ public class InitResponseServer extends Response {
 	@Override
 	protected void verify() throws ProtocolException {
 		String key = (String) this.fields.get(Constant.Config.KEY);
-		if(config.getKey(key) == false){
-			throw new ProtocolException("Vérfier la clé "+key);
+		if(ApplicationContext.fileTrackers.containsKey(key) == false){
+			throw new ProtocolException("Vï¿½rfier la clï¿½ "+key);
 		}		
 	}
 	@Override
 	protected void setMessage() {
 		String key = (String) this.fields.get(Constant.Config.KEY);
-		Map<String, String > m = (Map<String, String>) config.getField(key);
-		String bufferMap = m.get(Constant.Config.BUFFER_MAP);
+		FileTracker m = ApplicationContext.fileTrackers.get(key);
+		String bufferMap = Operation.bitsetToString(m.getBufferMap());
 		
 		String[] out = new String[3];
 		out[0] = HAVE;

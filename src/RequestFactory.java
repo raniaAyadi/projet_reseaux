@@ -1,22 +1,21 @@
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 /**
  * Classe RequestFactory
- * RequestFactory permet d'instancier une classe concrète de la classe abstraite Request
- * Le patron Factory est implementé
+ * RequestFactory permet d'instancier une classe concrï¿½te de la classe abstraite Request
+ * Le patron Factory est implementï¿½
  */
 public class RequestFactory {
 	/**
 	 * 
-	 * @param className le nom de classe concrète
-	 * @param in la chaine de caractère à apsser au constructeur 
-	 * @return une instance de className, le cast doit etre faire par l'appelant, null si une exception est levée
+	 * @param className le nom de classe concrï¿½te
+	 * @param in la chaine de caractï¿½re ï¿½ apsser au constructeur 
+	 * @return une instance de className, le cast doit etre faire par l'appelant, null si une exception est levï¿½e
 	 * @throws ProtocolException 
 	 */
 	public static Request createRequest(String className, String in) throws ProtocolException{
-		Class c = null;
+		Class<?> c = null;
 		try {
 			c = Class.forName(className);
 		} catch (ClassNotFoundException e) {
@@ -24,7 +23,7 @@ public class RequestFactory {
 			return null;
 		}
 		
-		Constructor ct;
+		Constructor<?> ct;
 		try {
 			ct = c.getConstructor(String.class);
 		} catch (NoSuchMethodException | SecurityException e) {

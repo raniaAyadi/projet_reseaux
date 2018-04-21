@@ -13,14 +13,16 @@ public class GetResponseServer extends Response {
 	@Override
 	protected void verify() throws ProtocolException {
 		String key = (String) fields.get(Constant.Config.KEY);
+		@SuppressWarnings("unchecked")
 		Set<Integer> parts = (Set<Integer>)fields.get(Constant.InitResponseServer.PARTS_TO_DOWNLOAD);
-
-		if(config.getKey(key) == false){
-			throw new ProtocolException("Vérfier la clé "+key);
+		Map<String, FileTracker> l = ApplicationContext.fileTrackers;
+		
+		if(l.containsKey(key) == false){
+			throw new ProtocolException("Vï¿½rfier la clï¿½ "+key);
 		}
 		else {
-			Map<String, String> m = (Map<String, String>)config.getField(key);
-			String bufferMap = m.get(Constant.Config.BUFFER_MAP);
+			FileTracker m = l.get(key);
+			String bufferMap = Operation.bitsetToString(m.getBufferMap());
 			for(Integer i : parts) {
 				try {
 					if(bufferMap.charAt(i-1) == '0') {
@@ -38,17 +40,22 @@ public class GetResponseServer extends Response {
 	@Override
 	protected void setMessage() throws IOException {
 		String key = (String) fields.get(Constant.Config.KEY);
-		Map<String, String> fileProp = (Map<String, String>) config.getField(key);
+		Map<String, FileTracker> l = ApplicationContext.fileTrackers;
+		FileTracker m = l.get(key);
+		@SuppressWarnings("unchecked")
 		Set<Integer> parts = (Set<Integer>)fields.get(Constant.InitResponseServer.PARTS_TO_DOWNLOAD);
 
 		String[] buff = new String[parts.size()];
-		String filePath = fileProp.get(Constant.Config.FILE_NAME);
-		Set<String> set = fileProp.keySet();
-		int cutSize = Integer.parseInt(fileProp.get(Constant.Config.CUT));
 		
 		int j=0;
 		for(Integer i : parts) {
-			String s = i.toString()+":"+Operation.readPart(filePath, cutSize, i);
+			String s = null;
+			try {
+				s = i.toString()+":"+m.getPiece(i);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			buff[j] = s;
 			j++;
 		}

@@ -18,10 +18,7 @@ public class GetRequestServer extends Request {
 
 	@Override
 	protected void putFields() {
-		String key;
 		Set<Integer> parts = new HashSet<>();
-		
-		key = this.matcher.group(1);
 		this.fields.put(Constant.Config.KEY, this.matcher.group(1));
 		
 		String buff[] = this.matcher.group(2).split("\\p{Space}");

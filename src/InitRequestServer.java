@@ -1,20 +1,6 @@
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Pattern;
-
-
 /**
  * Classe RequestInitialisation
- * permet de décoder et de vérifier la requete d'initialisation envoyé par le client
+ * permet de dï¿½coder et de vï¿½rifier la requete d'initialisation envoyï¿½ par le client
  */
 
 public class InitRequestServer extends Request{
