@@ -3,7 +3,7 @@ import java.util.Set;
 
 public class GetRequestServer extends Request {
 	
-	private static final String REG = "[gE][eE][tT][pP][iI][eE][cC][eE][sS]\\p{Space}+(\\p{Alnum}+)\\p{Space}+"
+	private static final String REG = "[gE][eE][tT][pP][iI][eE][cC][eE][sS]\\p{Space}+(.+)\\p{Space}+"
 									+ "\\[([0-9]+(\\p{Space}[0-9]+)*)\\]\\p{Space}*";
 	
 	

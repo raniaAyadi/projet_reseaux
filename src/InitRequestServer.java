@@ -6,7 +6,7 @@
 public class InitRequestServer extends Request{
 
 	private static final String REG = "[iI][nN][tT][eE][rR][eE][sS][tT][eE][dD]"
-									+ "\\p{Space}+(\\p{Alnum}+)\\p{Space}*";
+									+ "\\p{Space}+(.+)\\p{Space}*";
 	
 	/**
 	 * 

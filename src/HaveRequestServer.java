@@ -1,7 +1,7 @@
 
 public class HaveRequestServer extends Request {
 	private static final String REG = "[hH][aA][vV][eE]"
-									+ "\\p{Space}+(\\p{Alnum}+)\\p{Space}*"
+									+ "\\p{Space}+(.+)\\p{Space}*"
 									+ "([01]+)\\p{Space}*";
 
 	public HaveRequestServer(String in) throws ProtocolException {
