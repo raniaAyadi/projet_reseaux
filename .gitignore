@@ -20,3 +20,7 @@
 *.properties
 .meta	
 /bin/
+
+# eclipse files
+.classpath
+.project

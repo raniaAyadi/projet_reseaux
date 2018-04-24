@@ -19,7 +19,7 @@ public class UserAction {
 	 */
 	public static void startLeech(String fileName,long size,int pieceSize,String key,String path) throws Exception{	
 		if(path == null)
-			path = MyConfig.downloadPath;
+			path = Config.downloadPath;
 		if(path == null)
 			path = ".";
 		FileTracker ft = new FileTracker(fileName, size, pieceSize, key, path);

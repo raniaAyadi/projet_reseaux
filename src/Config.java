@@ -24,7 +24,7 @@ import org.apache.commons.cli.ParseException;
  * 
  */
 @SuppressWarnings("deprecation")
-public class MyConfig {
+public class Config {
 
 	public static int listenPort;
 	public static int trackerPort;

@@ -26,7 +26,7 @@ public class TrackerConnection extends Connection{
 	
 	public void announce() throws Exception{
 		
-		String req = "announce listen " + MyConfig.listenPort + " seed [";
+		String req = "announce listen " + Config.listenPort + " seed [";
 		List<String> leecher_keys = new ArrayList<>();
 		boolean first = true;
 		for (Map.Entry<String, FileTracker> entry : ApplicationContext.fileTrackers.entrySet()) {

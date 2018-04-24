@@ -33,7 +33,7 @@ public class PersistanceWorker implements Runnable {
 
 
 		// reload filetrackers from disk
-		File metaDir = new File(MyConfig.metaPath);
+		File metaDir = new File(Config.metaPath);
 		for (File curr : metaDir.listFiles()) {
 			if (curr.isDirectory())
 				continue;
@@ -64,7 +64,7 @@ public class PersistanceWorker implements Runnable {
 
 		while (true) {
 			// TODO: handel this in a better way, is the metaPath crutial, can this thread be shut down ??, should this thread
-			File fl = new File(MyConfig.metaPath);
+			File fl = new File(Config.metaPath);
 			if(!fl.exists() || !fl.isDirectory()){ // user fucked up the meta directory while the app is running
 				System.err.println("persistance context : error .meta path not valid");
 				System.exit(0);
@@ -96,7 +96,7 @@ public class PersistanceWorker implements Runnable {
 				
 				// serialize file tracker and store it in the .meta folder
 				try {
-					FileOutputStream fileOut = new FileOutputStream(MyConfig.metaPath + File.separator + fileTracker.getFileName() + ".ser");
+					FileOutputStream fileOut = new FileOutputStream(Config.metaPath + File.separator + fileTracker.getFileName() + ".ser");
 					ObjectOutputStream out = new ObjectOutputStream(fileOut);
 					out.writeObject(fileTracker);
 					out.close();

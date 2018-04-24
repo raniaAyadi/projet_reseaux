@@ -108,7 +108,7 @@ public class FileTracker implements java.io.Serializable   {
 	private int generatePieceSize(long size){
 		int KB = 1024;
 		int MB = 1024*KB;
-		String confVal = MyConfig.propreties.getProperty("piece-size");
+		String confVal = Config.propreties.getProperty("piece-size");
 		if(confVal != null){
 			try{
 				int ret =  Integer.parseInt(confVal);

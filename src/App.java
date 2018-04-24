@@ -8,7 +8,7 @@ public class App {
 		ApplicationContext ctx = new ApplicationContext( args);
 		
 		// to test file downlaoder
-		UserAction.startLeech("deathnote.mp3", 2911821, 16384, "/PevwjqG5je/3t+thYnOCGcav/avCPzs", null);
+		UserAction.startLeech("Big_data.pdf", 3186700, 16384, "m+My/DmC2DJm1M2X5wFUsJ8IbaSXsgL2", null);
 
 		// TODO: start up interface listener
 

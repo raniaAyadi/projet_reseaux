@@ -22,7 +22,7 @@ public class UploadListener implements Runnable {
 
 			// collect all the currently tracked files
 			Set<String> metaFiles = new HashSet<>();
-			File metaDir = new File(MyConfig.metaPath);
+			File metaDir = new File(Config.metaPath);
 			for (File meta : metaDir.listFiles()) {
 				if (meta.isDirectory())
 					continue;
@@ -30,7 +30,7 @@ public class UploadListener implements Runnable {
 				metaFiles.add(fileName);
 			}
 
-			File uploadDir = new File(MyConfig.uploadPath);
+			File uploadDir = new File(Config.uploadPath);
 			// TODO: do some checking, user might delete the directory, this
 			// should leed into an error resluting in listener shutdown
 

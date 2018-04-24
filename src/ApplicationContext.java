@@ -32,18 +32,18 @@ public class ApplicationContext {
 	
 	
 	public ApplicationContext( String[] args) throws Exception {
-		MyConfig.init(args); 
+		Config.init(args); 
 		fileTrackers = new HashMap<>();
 		fileDownloaders = new HashMap<>();
 		idMapper = new HashMap<>();
-		trackerConnection = new TrackerConnection(MyConfig.trackerIp, MyConfig.trackerPort);
-		Server server = new Server(MyConfig.listenPort);
+		trackerConnection = new TrackerConnection(Config.trackerIp, Config.trackerPort);
+		Server server = new Server(Config.listenPort);
 		
 		// persist application state
 		(new Thread(new PersistanceWorker())).start();
 		
 		// start upload watcher if specified in configuration file
-		if(MyConfig.uploadPath != null)
+		if(Config.uploadPath != null)
 			(new Thread(new UploadListener())).start();
 		
 		//start the server
