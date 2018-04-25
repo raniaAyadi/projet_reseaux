@@ -98,7 +98,9 @@ public class PersistanceWorker implements Runnable {
 				try {
 					FileOutputStream fileOut = new FileOutputStream(Config.metaPath + File.separator + fileTracker.getFileName() + ".ser");
 					ObjectOutputStream out = new ObjectOutputStream(fileOut);
-					out.writeObject(fileTracker);
+					synchronized (fileTracker) {
+						out.writeObject(fileTracker);
+					}
 					out.close();
 					fileOut.close();
 				} catch (IOException i) {

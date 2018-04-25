@@ -47,11 +47,11 @@ public class FileDownloader implements Runnable {
 		int i = 0;
 		int startIndex = 0;
 		while(i!=ft.getNumberPieces()){
-			if(found && !ft.getBufferMap().get(i)){
+			if(found && !ft.has(i)){
 				startIndex = i;
 				break;
 			}
-			if(ft.getBufferMap().get(i)){
+			if(ft.has(i)){
 				found = true;
 			}
 			i++;

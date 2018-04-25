@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.BitSet;
 
@@ -77,8 +78,14 @@ public class FileTracker implements java.io.Serializable   {
 		bufferMap.set(0,numberPieces,false);
 	}
 
-
+	/**
+	 * Thread safe
+	 * @param piece
+	 * @param pieceIndex
+	 */
 	public void addPiece(byte[]piece,int pieceIndex) {
+		if(pieceIndex<0 || pieceIndex >=numberPieces)
+			throw new IndexOutOfBoundsException();
 		// trim the fat in case of last piece
 		if(pieceIndex == (numberPieces -1)){
 			int chunksize = (int) (pieceSize - (numberPieces*pieceSize - size)) ;
@@ -86,17 +93,60 @@ public class FileTracker implements java.io.Serializable   {
 			System.arraycopy(piece, 0, aux, 0, chunksize);
 			piece = aux;
 		}
-		Storage.writePiece(fileName, piece,(int)( pieceIndex * pieceSize) );
-		bufferMap.set(pieceIndex);
+		try{
+			Storage.writePiece(fileName, piece,(int)( pieceIndex * pieceSize) );
+		}catch (IOException e){
+			System.err.println("error writing piece with index: " + pieceIndex);
+			return;
+		}
+		
+		synchronized (this) {
+			bufferMap.set(pieceIndex);
+		}
 	}
 
-	public byte[] getPiece(int pieceIndex) throws Exception{
-		// last piece will be jammed with white spaces (bits de bourrage)
-		return Storage.readPiece(filePath, pieceIndex*pieceSize, pieceSize);
+	/**
+	 * Thread safe
+	 * @param pieceIndex
+	 * @return
+	 * @throws PieceNotAvailableException
+	 * @throws IOException
+	 */
+	public byte[] getPiece(int pieceIndex) throws PieceNotAvailableException, IOException  {
+		if(pieceIndex >= numberPieces || pieceIndex <0 )
+			throw new IndexOutOfBoundsException();
+		synchronized (this) {
+			if(!bufferMap.get(pieceIndex)){
+				throw new PieceNotAvailableException();
+			}			
+		}
+		try{
+			return Storage.readPiece(filePath, pieceIndex*pieceSize, pieceSize);
+		}catch(IOException e){
+			System.err.println("error when reading piece");
+			throw e;
+		}
+	}
+	
+	/**
+	 * Thread safe
+	 * indicates if piece with index 'index' is available
+	 * 
+	 * @param index
+	 * @return
+	 */
+	public boolean has(int index){
+		if(index <0 || index >= numberPieces){
+			throw new IndexOutOfBoundsException();
+		}
+		synchronized (this) {
+			return bufferMap.get(index);
+		}
 	}
 
 
 	public boolean isSeeding(){
+		// TODO: update using counter
 		return bufferMap.cardinality() == numberPieces;
 	}
 
@@ -162,42 +212,36 @@ public class FileTracker implements java.io.Serializable   {
 	}
 
 
-	public void setSize(long size) {
-		this.size = size;
-	}
-
-
 	public int getPieceSize() {
 		return pieceSize;
 	}
 
-
-	public void setPieceSize(int pieceSize) {
-		this.pieceSize = pieceSize;
+	/**
+	 * Thread safe
+	 * @return
+	 */
+	public String getBuffermap(){
+		synchronized (this) {
+			String ret = "";
+			int size = bufferMap.length();
+			
+			for(int i = 0 ; i < size;i ++){
+				if(bufferMap.get(i)){
+					ret+='1';
+				}else{
+					ret += '0';
+				}
+			}
+			return ret;
+		}
 	}
 
 
-	public BitSet getBufferMap() {
-		return bufferMap;
-	}
-
-
-	public void setBufferMap(BitSet bufferMap) {
-		this.bufferMap = bufferMap;
-	}
-
-
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
-
-
+	
 
 	public String getFileName(){
 		return fileName;
 	}
-
-
 
 
 }

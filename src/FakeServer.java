@@ -34,8 +34,7 @@ public class FakeServer {
 					if(fileTrackers.containsKey(requestedKey)){
 						pred.write("have " + requestedKey + " ");
 						FileTracker resp = fileTrackers.get(requestedKey);
-						BitSet buffermap = resp.getBufferMap();
-						pred.write(Operation.bitsetToString(buffermap));
+						pred.write(resp.getBuffermap());
 						pred.flush();
 						soc.close();
 						continue;

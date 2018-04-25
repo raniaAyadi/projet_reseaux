@@ -1,5 +1,7 @@
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 
 /**
@@ -16,9 +18,10 @@ public class Storage {
 	 * @param offset
 	 * @param pieceSize
 	 * @return 
+	 * @throws IOException 
 	 * @throws Exception
 	 */
-	public static byte[] readPiece(String filePath,long offset,int pieceSize) throws Exception{
+	public static byte[] readPiece(String filePath,long offset,int pieceSize) throws IOException{
 		byte[] ret = new byte[pieceSize];
 		RandomAccessFile raf = new RandomAccessFile(filePath, "r");
 		raf.seek(offset);
@@ -27,7 +30,7 @@ public class Storage {
 		return ret;
 	}
 	
-	public static void writePiece(String filePath,byte[] piece,int offset) {	
+	public static void writePiece(String filePath,byte[] piece,int offset) throws IOException  {	
 		// TODO : update to support files containing holes 
 		while(true){
 			try{
@@ -37,8 +40,9 @@ public class Storage {
 				raf.close();
 
 				break;
-			}catch (Exception e){
+			}catch (IOException e){
 				System.out.println("File write failur, file is used by another process");
+				throw e;
 			}
 		}
 	
