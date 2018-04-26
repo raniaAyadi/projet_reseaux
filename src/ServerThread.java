@@ -71,99 +71,9 @@ public class ServerThread implements Runnable {
 	 * @see protocolInformations
 	 */
 	private void communicate() {
-<<<<<<< HEAD
 		try {
 			Request req = receive();
 			send(req);
-=======
-		Request req = null;
-		
-			try {
-				req = receive(InitRequestServer.class.getName(), false);
-				this.protocolInterested(req);
-			} catch (IOException e) {
-				e.printStackTrace();
-			    this.out.println("Erreur interne");
-			    out.flush();
-			    disconnect();
-			} catch (ProtocolException e) {
-				e.printStackTrace();
-				try {
-					req = receive(HaveRequestServer.class.getName(), true);
-					this.protocolInformations(req);
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				    this.out.println("Erreur interne");
-				    out.flush();
-				    disconnect();
-				} catch (ProtocolException e1) {
-					e1.printStackTrace();
-					this.out.println(e1.getMessage());
-					this.out.flush();
-					req = null;
-					try{
-						req = receive(GetRequestServer.class.getName(), true);
-						this.protocolDownload(req);
-					}
-					catch (IOException e2) {
-						e1.printStackTrace();
-					    this.out.println("Erreur interne");
-					    out.flush();
-					    disconnect();
-					} catch (ProtocolException e2) {
-						e1.printStackTrace();
-						this.out.println(e2.getMessage());
-						this.out.flush();
-						req = null;
-					}
-				}
-			}
-	}
-	
-
-	private void protocolDownload(Request req) {
-		try {			
-			this.send(GetResponseServer.class.getName(), req);
-		} catch (IOException e) {
-			e.printStackTrace();
-		    this.out.println("Erreur interne");
-		    out.flush();
-		} catch (ProtocolException e) {
-			e.printStackTrace();
-			this.out.println(e.getMessage());
-			this.out.flush();
-		}
-		finally {
-			disconnect();
-		}
-		
-
-	}
-	
-	private void protocolInformations(Request req) {
-		try {			
-			this.send(HaveResponseServer.class.getName(), req);
-		} catch (IOException e) {
-			e.printStackTrace();
-		    this.out.println("Erreur interne");
-		    out.flush();
-		} catch (ProtocolException e) {
-			e.printStackTrace();
-			this.out.println(e.getMessage());
-			this.out.flush();
-		}
-		finally {
-			disconnect();
-		}
-		
-
-	}
-	
-
-	private void protocolInterested(Request req) {
-		try {			
-			this.send(InitResponseServer.class.getName(), req);
->>>>>>> 5bfb4c2cac7068093ab06a494de180442d33b2c1
 		} catch (IOException e) {
 			e.printStackTrace();
 		    this.out.println("Erreur interne");

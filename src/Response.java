@@ -6,14 +6,14 @@ abstract public class Response {
 	protected Map<String, Object> fields;   // input
 	protected PrintWriter out;
 	
-	public Response(PrintWriter out, Map<String, Object> fields) throws ProtocolException, IOException {
+	public Response(PrintWriter out, Map<String, Object> fields) throws ProtocolException, IOException, PieceNotAvailableException {
 		this.fields = fields;
 		this.out = out;
 		
 		verify();		
 	}
 	
-	protected abstract void verify() throws ProtocolException;
+	protected abstract void verify() throws ProtocolException, PieceNotAvailableException;
 	
 	protected abstract void sendMessage() throws IOException;
 }

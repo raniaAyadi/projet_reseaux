@@ -11,7 +11,7 @@ public class InterestedResponseServer extends Response {
 	public static final String SEP = " ";	
 
 	
-	public InterestedResponseServer(PrintWriter out, Map<String, Object> fields) throws ProtocolException, IOException {
+	public InterestedResponseServer(PrintWriter out, Map<String, Object> fields) throws ProtocolException, IOException, PieceNotAvailableException {
 		super(out, fields);
 	}
 	
@@ -26,7 +26,7 @@ public class InterestedResponseServer extends Response {
 	protected void sendMessage() {
 		String key = (String) this.fields.get(Constant.Config.KEY);
 		FileTracker f = ApplicationContext.fileTrackers.get(key);
-		String bufferMap = Operation.bitsetToString(f.getBufferMap());
+		String bufferMap = f.getBuffermap();
 		
 		String[] out = new String[3];
 		out[0] = HAVE;

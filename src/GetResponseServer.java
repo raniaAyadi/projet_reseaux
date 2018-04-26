@@ -8,13 +8,13 @@ public class GetResponseServer extends Response {
 	private static final String DATA ="data";
 	
 
-	public GetResponseServer(PrintWriter out,Map<String, Object> fields) throws ProtocolException, IOException {
+	public GetResponseServer(PrintWriter out,Map<String, Object> fields) throws ProtocolException, IOException, PieceNotAvailableException {
 		super(out, fields);
 		this.out = out;
 	}
 
 	@Override
-	protected void verify() throws ProtocolException {
+	protected void verify() throws ProtocolException, PieceNotAvailableException {
 		String key = (String) fields.get(Constant.Config.KEY);
 		@SuppressWarnings("unchecked")
 		Set<Integer> parts = (Set<Integer>)fields.get(Constant.InitResponseServer.PARTS_TO_DOWNLOAD);
@@ -24,12 +24,12 @@ public class GetResponseServer extends Response {
 		}
 		else {
 			FileTracker f = ApplicationContext.fileTrackers.get(key);
-			String bufferMap = Operation.bitsetToString(f.getBufferMap());
+			String bufferMap = f.getBuffermap();
 	
 			for(Integer i : parts) {
 				try {
 					if(bufferMap.charAt(i-1) == '0') {
-						throw new ProtocolException("La partie "+i+" n'est pas disponible");
+						throw new PieceNotAvailableException("La partie "+i+" n'est pas disponible");
 					}
 				}
 				catch(IndexOutOfBoundsException ex) {

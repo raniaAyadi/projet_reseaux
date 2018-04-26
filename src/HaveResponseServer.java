@@ -7,7 +7,7 @@ public class HaveResponseServer extends Response {
 	private static final String HAVE = "have";
 	private static final String SEP =" ";
 
-	public HaveResponseServer(PrintWriter out, Map<String, Object> fields) throws ProtocolException, IOException {
+	public HaveResponseServer(PrintWriter out, Map<String, Object> fields) throws ProtocolException, IOException, PieceNotAvailableException {
 		super(out, fields);
 	}
 
@@ -21,7 +21,7 @@ public class HaveResponseServer extends Response {
 		}
 		
 		FileTracker f = ApplicationContext.fileTrackers.get(key);
-		String bufferFile = Operation.bitsetToString(f.getBufferMap());
+		String bufferFile = f.getBuffermap();
 		if(bufferFile.length() != bufferMap.length()) {
 			throw new ProtocolException("Vérifier le buffer Map "+bufferMap);
 		}
@@ -31,7 +31,7 @@ public class HaveResponseServer extends Response {
 	protected void sendMessage() throws IOException {
 		String key = (String) this.fields.get(Constant.Config.KEY);
 		FileTracker f = ApplicationContext.fileTrackers.get(key);
-		String bufferMap = Operation.bitsetToString(f.getBufferMap());;
+		String bufferMap = f.getBuffermap();
 		
 		String message = HAVE + SEP + key + SEP + bufferMap;
 		out.print(message);
