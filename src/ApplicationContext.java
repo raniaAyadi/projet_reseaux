@@ -9,7 +9,7 @@ import java.util.Map;
 public class ApplicationContext {
 	private static  Map<Integer, String > idMapper;
 	public static Map<String, FileTracker> fileTrackers;
-	public static Map<Integer, FileDownloader> fileDownloaders; // needed for pause/resume functionality
+	public static Map<Integer,StatCollector> statCollectors;
 	public static TrackerConnection trackerConnection;
 	private static int uniqueIdCounter = 0;
 	
@@ -19,16 +19,18 @@ public class ApplicationContext {
 		fileTrackers.put(ft.getKey(), ft);
 		idMapper.put(ft.id, ft.getKey());
 		if(!ft.isSeeding()){
-			FileDownloader fd = new FileDownloader(ft);
-			fileDownloaders.put(ft.id, fd);
-			new Thread(fd).start();
+			new Thread(new FileDownloader(ft)).start(); 
 		}
+		StatCollector st = new StatCollector(ft);
+		statCollectors.put(ft.id,st );
+		// TODO : timer.scheduleAtFixedRate ... 
 		return ft.id;
 	}
 	
 	public static void removeFileTracker(Integer id) {
 		fileTrackers.remove(idMapper.get(id));
 		idMapper.remove(id);
+		// TODO: cordinate this with UserAction.removeFile()
 	}
 	
 	/**
@@ -47,7 +49,7 @@ public class ApplicationContext {
 	public ApplicationContext( String[] args) throws Exception {
 		Config.init(args); 
 		fileTrackers = new HashMap<>();
-		fileDownloaders = new HashMap<>();
+		statCollectors = new HashMap<>();
 		idMapper = new HashMap<>();
 		trackerConnection = new TrackerConnection(Config.trackerIp, Config.trackerPort);
 		Server server = new Server(Config.listenPort);

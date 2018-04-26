@@ -42,16 +42,11 @@ public class UserAction {
 	 * Stop leeching/seeding 
 	 */
 	public static void removeFile(Integer id){
-		
-		// TODO: locate thread, terminate it (maybe lock on filetracker) , then remove file tracker  
-		
-		//if(ApplicationContext.fileDownloaders.containsKey(id)){
-			//ApplicationContext.fileDownloaders.get(id).stop();
-		//}
-		//ApplicationContext.removeFileTracker(id);
-		// TODO : ask the user if he wants to delete the file from the disk too (in case of non seeded file)	
-		// TODO what about when the file is uploaded using the upload listener, should i delete the file from the upload directory ?
-		// or is it simply no problem (bug in upload listener fixed by <added> set
+		// TODO
+		// will i need maps for file downlaoder and stat collector in appContext or can i do it otherwise (through filetracker ?)
+		// remove filetracker reference and set some attribute indicating finish state, threads automatically exits and Filetracker becomes
+		// object of garbage collector, in this case you should update persistanceWorker to take that variable into consideration (do not 
+		// persist any more
 	}
 	
 	public static void pauseLeech(Integer id){

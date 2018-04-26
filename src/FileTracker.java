@@ -32,6 +32,11 @@ public class FileTracker implements java.io.Serializable   {
 	private boolean suspended;
 	public transient Object suspendLock; // needed seprate lock for pause/resume
 	
+	private int maxBytes; // max allowed in one cyle
+	private int currBytes; // bytes per cycle
+	public transient Object statLock;
+	
+	
 
 
 
@@ -54,7 +59,8 @@ public class FileTracker implements java.io.Serializable   {
 			System.out.println("nb pieces : " + numberPieces);
 			bufferMap = new BitSet( numberPieces);
 			bufferMap.set(0, numberPieces);
-			suspendLock = new Object();
+			suspendLock = new Object(); // not necessary, no file downloader will be instaciated ! 
+			statLock = new Object();
 	}
 
 	/**
@@ -84,7 +90,62 @@ public class FileTracker implements java.io.Serializable   {
 		bufferMap = new BitSet(numberPieces);
 		bufferMap.set(0,numberPieces,false);
 		suspendLock = new Object();
+		maxBytes = -1; // unlimeted
+		currBytes = 0;
+		statLock = new Object();
 	}
+	
+	/**
+	 * Thread safe
+	 * @param maxBytes maximum number of bytes per second
+	 */
+	public void setDownSpeed(int maxBytes){
+		// TODO : error checking
+		synchronized (statLock) {
+			this.maxBytes = maxBytes;
+			currBytes = 0;
+		}
+	}
+	
+	/**
+	 * Thread safe
+	 * Unset download speed limit 
+	 */
+	public void unsetDownSpeed(){
+		synchronized (statLock) {
+			maxBytes = -1;
+		}
+	}
+	
+	/**
+	 * Thread safe
+	 * check if fileTracker supports more pieces in the current cyle
+	 * @return
+	 */
+	public boolean downloadAllowed(){
+		synchronized (statLock) {
+			if(maxBytes == -1)
+				return true;
+			return currBytes <= maxBytes;
+		}
+	}
+	
+	/**
+	 * thread safe
+	 * Resets the currBytes to 0 (initiate stat of the next cycle) 
+	 * @return the currBytes before reset
+	 */
+	public int resetAndGet(){
+		int ret;
+		synchronized (statLock) {
+			ret = currBytes;
+			currBytes = 0;
+			if(ret == maxBytes)
+				statLock.notify(); // fileDownloader waiting
+		}
+		return ret;
+	}
+	
 
 	/**
 	 * Thread safe
@@ -112,6 +173,9 @@ public class FileTracker implements java.io.Serializable   {
 			}
 			synchronized (bufferMap) {
 				bufferMap.set(pieceIndex);
+			}
+			synchronized (statLock) {
+				currBytes+= pieceSize;
 			}
 			
 		}catch (IOException e){
@@ -223,6 +287,11 @@ public class FileTracker implements java.io.Serializable   {
 		if(size < 800*MB)  return 256*KB;
 		if(size < 1024*MB) return 512*KB;
 		return MB;
+	}
+	
+	public double getPercentage(){
+		// TODO : add synchronisation when accessing totalReached
+		return totalReached / numberPieces;
 	}
 	
 

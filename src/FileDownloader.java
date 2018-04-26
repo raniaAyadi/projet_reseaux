@@ -87,18 +87,8 @@ public class FileDownloader implements Runnable {
 				continue;
 			}
 			
-	
-			// TODO: set up download speed using thread.sleep ? => no use nb_down_max (attribute in filetracker)
-		    /* 
-			try{
-		    	  Thread.sleep(100);
-		      }catch(Exception e){
-		        // ...
-		     }*/
 		}
 		System.out.println("downlaod complete");
-		// TODO: change this:  automatically removes himself when terminated from list of downloads
-		ApplicationContext.fileDownloaders.remove(ft.id);
 	}
 
 	
