@@ -19,7 +19,7 @@ public class UploadListener implements Runnable {
 	public void run() {
 		Set<String> added = new HashSet<>();
 		while (true) {
-
+			System.out.println("yes im a here");
 			// collect all the currently tracked files
 			Set<String> metaFiles = new HashSet<>();
 			File metaDir = new File(Config.metaPath);

@@ -37,6 +37,7 @@ public abstract class Connection {
 	 * @throws Exception
 	 */
 	protected void makeRequest(String request) throws UnknownHostException, IOException {
+		System.out.println("trying to  connect ot " + ip + ":" + port);
         soc = new Socket(ip,port);
         is = new BufferedInputStream(soc.getInputStream());
 		writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(soc.getOutputStream())), true);	

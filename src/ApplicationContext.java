@@ -21,11 +21,11 @@ public class ApplicationContext {
 		fileTrackers.put(ft.getKey(), ft);
 		idMapper.put(ft.id, ft.getKey());
 		if(!ft.isSeeding()){
-			StatCollector st = new StatCollector(ft);
-			statCollectors.put(ft.id,st );
-			Timer t = new Timer();
-			t.scheduleAtFixedRate(st, 100, 1000);
-			timers.put(ft.id, t);
+			//StatCollector st = new StatCollector(ft);
+			//statCollectors.put(ft.id,st );
+			//Timer t = new Timer();
+			//t.scheduleAtFixedRate(st, 100, 1000);
+			//timers.put(ft.id, t);
 			new Thread(new FileDownloader(ft)).start(); 
 		}
 	
@@ -64,14 +64,17 @@ public class ApplicationContext {
 		
 		trackerConnection = new TrackerConnection(Config.trackerIp, Config.trackerPort);
 		
-		Server server = new Server(Config.listenPort);
+		//Server server = new Server(Config.listenPort);
 		
 		// start upload watcher if specified in configuration file
-		if(Config.uploadPath != null)
+		if(Config.uploadPath != null){
+			System.out.println("not null");
 			(new Thread(new UploadListener())).start();
+		}
+			
 		
 		//start the server
-		(new Thread(server)).start();
+		//server.start();
 
 	}
 

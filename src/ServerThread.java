@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.logging.Level;
@@ -16,7 +17,7 @@ public class ServerThread implements Runnable {
 	private Socket socket ;     
 	private Integer numClient;    
 	private Logger log;           
-	PrintWriter out;
+	OutputStream out;
 	BufferedReader in;
 
 	/**
@@ -30,7 +31,7 @@ public class ServerThread implements Runnable {
 		this.numClient = numClient;
 		
     	this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		this.out = new PrintWriter(this.socket.getOutputStream());
+		this.out = this.socket.getOutputStream();
 
 		this.log = Logger.getLogger(ServerThread.class.getName());
 		this.log.log(Level.INFO,this+ "is connected");
@@ -71,17 +72,19 @@ public class ServerThread implements Runnable {
 	 * @see protocolInformations
 	 */
 	private void communicate() {
+		PrintWriter p = new PrintWriter(out);
+
 		try {
 			Request req = receive();
 			send(req);
 		} catch (IOException e) {
 			e.printStackTrace();
-		    this.out.println("Erreur interne");
-		    out.flush();
+		    p.println("Erreur interne");
+		    p.flush();
 		} catch (ProtocolException e) {
 			e.printStackTrace();
-			this.out.println(e.getMessage());
-			this.out.flush();
+			p.print(e.getMessage());
+			p.flush();
 		}
 		finally {
 			disconnect();
@@ -94,15 +97,18 @@ public class ServerThread implements Runnable {
 	}
 	
 	private void disconnect(){
-		this.out.println("Session is end");
-		this.out.flush();
 		try {
 			in.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		out.close();
+		try {
+			out.close();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		try {
 			socket.close();
 		} catch (IOException e) {

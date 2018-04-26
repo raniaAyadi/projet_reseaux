@@ -1,7 +1,6 @@
 import java.util.Set;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.Map;
 
 public class GetResponseServer extends Response {
@@ -28,7 +27,7 @@ public class GetResponseServer extends Response {
 	
 			for(Integer i : parts) {
 				try {
-					if(bufferMap.charAt(i-1) == '0') {
+					if(bufferMap.charAt(i) == '0') {
 						throw new PieceNotAvailableException("La partie "+i+" n'est pas disponible");
 					}
 				}
@@ -47,33 +46,33 @@ public class GetResponseServer extends Response {
 		
 		@SuppressWarnings("unchecked")
 		Set<Integer> parts = (Set<Integer>)fields.get(Constant.InitResponseServer.PARTS_TO_DOWNLOAD);
-		PrintWriter p = new PrintWriter(out);
 		
 		String initMessage = DATA+SEP+key+SEP+"[";
-		p.print(initMessage);
-		p.flush();
+		out.write(initMessage.getBytes());
+		out.flush();
 		
 		int j = 0;
 		for(Integer i : parts) {
 			j++;
 			String s = i.toString()+":";
-			p.print(s);
-			p.flush();
+			out.write(s.getBytes());
 			
 		    try {
 				out.write(f.getPiece(i));
-				out.flush();
+				System.out.println("size "+f.getPiece(i).length);
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new IOException(e.getMessage());
 			}
 		    
 		    if(j<parts.size())
-		    	p.print(SEP);
+		    	out.write(SEP.getBytes());
+		    System.out.println("im here");
+			out.flush();
 		}
 		
-		p.print("]");
-		p.flush();
+		out.write("]".getBytes());
+		out.flush();
 	}
 	
 }

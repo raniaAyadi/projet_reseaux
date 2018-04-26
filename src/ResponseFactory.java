@@ -1,3 +1,4 @@
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -6,7 +7,7 @@ import java.util.Map;
 public class ResponseFactory {
 	
 	@SuppressWarnings("unchecked")
-	public static Response createResponse(Request req, PrintWriter out) throws ProtocolException {
+	public static Response createResponse(Request req, OutputStream out) throws ProtocolException {
 		String className = null;
 		if(req instanceof InterestedRequestServer) {
 			className = InterestedResponseServer.class.getName();
@@ -32,7 +33,7 @@ public class ResponseFactory {
 		@SuppressWarnings("rawtypes")
 		Constructor ct;
 		try {
-			ct = c.getConstructor(PrintWriter.class, Map.class);
+			ct = c.getConstructor(OutputStream.class, Map.class);
 		} catch (NoSuchMethodException | SecurityException e) {
 			e.printStackTrace();
 			return null;
