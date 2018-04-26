@@ -15,6 +15,7 @@ public class Constant {
 		public static final String KEY = "key";
 		public static final String FILE_NAME = "fileName";
 		public static final String BUFFER_MAP = "bufferMap";
+		public static final String NB_THREAD ="nbThread";
 			
 	}
 	

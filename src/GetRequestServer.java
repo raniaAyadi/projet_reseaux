@@ -3,7 +3,7 @@ import java.util.Set;
 
 public class GetRequestServer extends Request {
 	
-	private static final String REG = "[gE][eE][tT][pP][iI][eE][cC][eE][sS]\\p{Space}+(.+)\\p{Space}+"
+	private static final String REG = "getpieces\\p{Space}+(\\p{Graph}+)\\p{Space}+"
 									+ "\\[([0-9]+(\\p{Space}[0-9]+)*)\\]\\p{Space}*";
 	
 	
@@ -18,7 +18,11 @@ public class GetRequestServer extends Request {
 
 	@Override
 	protected void putFields() {
+		@SuppressWarnings("unused")
+		String key;
 		Set<Integer> parts = new HashSet<>();
+		
+		key = this.matcher.group(1);
 		this.fields.put(Constant.Config.KEY, this.matcher.group(1));
 		
 		String buff[] = this.matcher.group(2).split("\\p{Space}");

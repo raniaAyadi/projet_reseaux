@@ -3,34 +3,42 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * Classe Server
- * Server h�rite Thread pour s'�x�cuter en parall�le avec un Client
- * un server se caract�rise un num�ro de port, sur lequel il est en �coute permanente 
+ * Server hérite Thread pour s'éxécuter en parallèle avec un Client
+ * un server se caractèrise un numéro de port, sur lequel il est en écoute permanente 
  */
 
-public class Server implements Runnable {
+public class Server extends Thread {
 	
 	private ServerSocket serverSocket;        // le socket de serveur
-	private Integer portNum;                  // pass� en param�tre d�s l'initialisation
-	private Logger log;                       // pour le d�bogage
-	private List<ServerThread> threadList ;   // enregistrer la liste des thread associ� � chaque connexion (client)
-	
+	private Integer portNum;                  // passé en paramètre dés l'initialisation
+	private Logger log;                       // pour le débogage
+	private List<ServerThread> threadList ;   // enregistrer la liste des thread associé à chaque connexion (client)
+	private ExecutorService executor;           // gérer les thread, notamment la pool de thread
 	
 	/**
 	 * Constructeur
-	 * @param portNum num�ro de port
+	 * @param portNum numéro de port
 	 */
 	public Server(Integer portNum){
 		this.log = Logger.getLogger(this.getClass().getName());
 		this.portNum = portNum;
 		this.threadList = new ArrayList<ServerThread>(); 
+		
+		int nbThread = 3 ;//Integer.parseInt((String)config.getField(Constant.Config.NB_THREAD));
+		executor = Executors.newFixedThreadPool(nbThread);
+
 		listen();
 	}
-		
+	
+	// TODO public Seeder(File* f);
+	
 	/**
 	 * Initialisation du serverSocket
 	 */
@@ -45,7 +53,7 @@ public class Server implements Runnable {
 	}
 	
 	/**
-	 * Etablissement d'une connexion en passant la socket � un thread traitant (ServerThread)
+	 * Etablissement d'une connexion en passant la socket à un thread traitant (ServerThread)
 	 */
 	private void connect(){
 		Socket socket;
@@ -54,7 +62,7 @@ public class Server implements Runnable {
 				socket = this.serverSocket.accept();
 				ServerThread serverThread = new ServerThread(socket, threadList.size()+1);
 				threadList.add(serverThread);
-				serverThread.start();
+				executor.execute(serverThread);
 			} catch (IOException e) {
 				log.log(Level.WARNING,"Failed connection");
 				e.printStackTrace();
@@ -64,7 +72,7 @@ public class Server implements Runnable {
 	}
 	
 	/**
-	 * red�finition de la m�thode run de Thread pour lancer le thread
+	 * redéfinition de la méthode run de Thread pour lancer le thread
 	 */
 	public void run(){
 		log.log(Level.INFO, Thread.currentThread().getName());

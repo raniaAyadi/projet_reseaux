@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Map;
 
 public class HaveResponseServer extends Response {
@@ -6,33 +7,35 @@ public class HaveResponseServer extends Response {
 	private static final String HAVE = "have";
 	private static final String SEP =" ";
 
-	public HaveResponseServer(Map<String, Object> fields) throws ProtocolException, IOException {
-		super(fields);
+	public HaveResponseServer(PrintWriter out, Map<String, Object> fields) throws ProtocolException, IOException {
+		super(out, fields);
 	}
 
 	@Override
 	protected void verify() throws ProtocolException {
 		String key = (String) this.fields.get(Constant.Config.KEY);
 		String bufferMap = (String) this.fields.get(Constant.Config.BUFFER_MAP);
-		Map<String, FileTracker> l = ApplicationContext.fileTrackers;
 		
-		if(l.containsKey(key) == false){
-			throw new ProtocolException("V�rfier la cl� "+key);
+		if(ApplicationContext.fileTrackers.containsKey(key) == false){
+			throw new ProtocolException("Vérfier la clé "+key);
 		}
 		
-		FileTracker m = l.get(key);
-		String bufferFile = Operation.bitsetToString(m.getBufferMap());
+		FileTracker f = ApplicationContext.fileTrackers.get(key);
+		String bufferFile = Operation.bitsetToString(f.getBufferMap());
 		if(bufferFile.length() != bufferMap.length()) {
-			throw new ProtocolException("V�rifier le buffer Map "+bufferMap);
+			throw new ProtocolException("Vérifier le buffer Map "+bufferMap);
 		}
 	}
 
 	@Override
-	protected void setMessage() throws IOException {
+	protected void sendMessage() throws IOException {
 		String key = (String) this.fields.get(Constant.Config.KEY);
-		String bufferMap = Operation.bitsetToString(ApplicationContext.fileTrackers.get(key).getBufferMap());
+		FileTracker f = ApplicationContext.fileTrackers.get(key);
+		String bufferMap = Operation.bitsetToString(f.getBufferMap());;
 		
-		this.message = HAVE + SEP + key + SEP + bufferMap;
+		String message = HAVE + SEP + key + SEP + bufferMap;
+		out.print(message);
+		out.flush();
 	}
 
 }

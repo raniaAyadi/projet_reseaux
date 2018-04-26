@@ -3,19 +3,38 @@ import java.lang.reflect.InvocationTargetException;
 
 /**
  * Classe RequestFactory
- * RequestFactory permet d'instancier une classe concr�te de la classe abstraite Request
- * Le patron Factory est implement�
+ * RequestFactory permet d'instancier une classe concrète de la classe abstraite Request
+ * Le patron Factory est implementé
  */
 public class RequestFactory {
 	/**
 	 * 
-	 * @param className le nom de classe concr�te
-	 * @param in la chaine de caract�re � apsser au constructeur 
-	 * @return une instance de className, le cast doit etre faire par l'appelant, null si une exception est lev�e
+	 * @param className le nom de classe concrète
+	 * @param in la chaine de caractère à passer au constructeur, et qui détermine la type de requete 
+	 * @return une instance de className, le cast doit etre faire par l'appelant, null si une exception est levée
 	 * @throws ProtocolException 
 	 */
-	public static Request createRequest(String className, String in) throws ProtocolException{
-		Class<?> c = null;
+	
+	@SuppressWarnings("unchecked")
+	public static Request createRequest(String in) throws ProtocolException{
+		char x = in.charAt(0);
+		String className;
+		
+		switch(x) {
+		case 'i' : className = InterestedRequestServer.class.getName();
+		break;
+		
+		case 'g' : className = GetRequestServer.class.getName();
+		break;
+		
+		case 'h' : className = HaveRequestServer.class.getName();
+		break;
+		
+		default : throw new ProtocolException("Vérifier ton message");
+		}
+		
+		@SuppressWarnings("rawtypes")
+		Class c = null;
 		try {
 			c = Class.forName(className);
 		} catch (ClassNotFoundException e) {
@@ -23,7 +42,8 @@ public class RequestFactory {
 			return null;
 		}
 		
-		Constructor<?> ct;
+		@SuppressWarnings("rawtypes")
+		Constructor ct;
 		try {
 			ct = c.getConstructor(String.class);
 		} catch (NoSuchMethodException | SecurityException e) {

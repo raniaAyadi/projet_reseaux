@@ -1,13 +1,16 @@
 import java.util.Set;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Map;
 
 public class GetResponseServer extends Response {
 	private static final String SEP = " ";
 	private static final String DATA ="data";
+	
 
-	public GetResponseServer(Map<String, Object> fields) throws ProtocolException, IOException {
-		super(fields);
+	public GetResponseServer(PrintWriter out,Map<String, Object> fields) throws ProtocolException, IOException {
+		super(out, fields);
+		this.out = out;
 	}
 
 	@Override
@@ -15,14 +18,14 @@ public class GetResponseServer extends Response {
 		String key = (String) fields.get(Constant.Config.KEY);
 		@SuppressWarnings("unchecked")
 		Set<Integer> parts = (Set<Integer>)fields.get(Constant.InitResponseServer.PARTS_TO_DOWNLOAD);
-		Map<String, FileTracker> l = ApplicationContext.fileTrackers;
-		
-		if(l.containsKey(key) == false){
-			throw new ProtocolException("V�rfier la cl� "+key);
+
+		if(ApplicationContext.fileTrackers.containsKey(key) == false){
+			throw new ProtocolException("Vérfier la clé "+key);
 		}
 		else {
-			FileTracker m = l.get(key);
-			String bufferMap = Operation.bitsetToString(m.getBufferMap());
+			FileTracker f = ApplicationContext.fileTrackers.get(key);
+			String bufferMap = Operation.bitsetToString(f.getBufferMap());
+	
 			for(Integer i : parts) {
 				try {
 					if(bufferMap.charAt(i-1) == '0') {
@@ -38,31 +41,34 @@ public class GetResponseServer extends Response {
 	}		
 
 	@Override
-	protected void setMessage() throws IOException {
+	protected void sendMessage() throws IOException {
 		String key = (String) fields.get(Constant.Config.KEY);
-		Map<String, FileTracker> l = ApplicationContext.fileTrackers;
-		FileTracker m = l.get(key);
+		FileTracker f = ApplicationContext.fileTrackers.get(key);
+		
 		@SuppressWarnings("unchecked")
 		Set<Integer> parts = (Set<Integer>)fields.get(Constant.InitResponseServer.PARTS_TO_DOWNLOAD);
-
-		String[] buff = new String[parts.size()];
 		
-		int j=0;
+		String initMessage = DATA+SEP+key+SEP+"[";
+		out.print(initMessage);
+		
+		int j = 0;
 		for(Integer i : parts) {
-			String s = null;
-			try {
-				s = i.toString()+":"+m.getPiece(i);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			buff[j] = s;
 			j++;
+			String s = i.toString()+":";
+			out.print(s);
+		    try {
+				out.print(f.getPiece(i));
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new IOException(e.getMessage());
+			}
+		    
+		    if(j<parts.size())
+		    	out.print(SEP);
 		}
 		
-		String s = String.join(SEP, buff);
-		System.out.println("s is "+s);
-		message = DATA+SEP+key+SEP+"["+s+"]";		
+		out.print("]");
+		out.flush();
 	}
 	
 }

@@ -5,19 +5,19 @@ import java.util.regex.Pattern;
 
 /**
  * Classe Decoder
- * Decoder est une classe abstraite pour d�coder un message
+ * Decoder est une classe abstraite pour décoder un message
  */
 
 public abstract class Request {
 	
-	protected String in;            	   // le message � d�coder
+	protected String in;            	   // le message à décoder
 	protected Map<String, Object> fields;  // dictionnaire des champs
-	protected Pattern reg;                 // l'expression r�guli�re
+	protected Pattern reg;                 // l'expression régulière
 	protected Matcher matcher;             // pour analyser le message
-	protected String exp;                  // la chaine qui d�crit reg                  
+	protected String exp;                  // la chaine qui décrit reg                  
 	/**
 	 * 
-	 * @param in le message � d�coder 
+	 * @param in le message à décoder 
 	 * @throws ProtocolException 
 	 */
 	public Request(String in) throws ProtocolException  {
@@ -34,7 +34,7 @@ public abstract class Request {
 	}
 	
 	/**
-	 * C'est la classe fille, concr�te, qui d�finit l'expression r�guli�re
+	 * C'est la classe fille, concrète, qui définit l'expression régulière
 	 */
 	protected abstract void setExp();
 	
@@ -44,22 +44,22 @@ public abstract class Request {
 	}
 	
 	/**
-	 * Lire un champ identifi�e par son nom 
-	 * @param key le nom de la propri�t� � lire
-	 * @return value = null si le cl� n'existe pas
+	 * Lire un champ identifiée par son nom 
+	 * @param key le nom de la propriété à lire
+	 * @return value = null si le clé n'existe pas
 	 */
 	public Object getField(String key) {
 		return this.fields.get(key);
 	}
 	
 	/**
-	 * m�thode abstraite
+	 * méthode abstraite
 	 * remplir le dictionanire fields
 	 */
 	protected abstract void putFields();
 	
 	/**
-	 * V�rfiier si le message est conforme au protocole, sinon une exception est lev�e
+	 * Vérfiier si le message est conforme au protocole, sinon une exception est levée
 	 * @throws ProtocolException
 	 */
 	private void verify() throws ProtocolException {

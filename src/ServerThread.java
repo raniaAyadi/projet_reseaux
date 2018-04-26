@@ -6,24 +6,23 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 /**
  * Classe ServerThread
- * ServerThread h�rite la classe Thread
- * un serverThread est associ� � une connexion particuli�re identifi�e par un socket pass� en param�tre
+ * ServerThread hérite la classe Thread
+ * un serverThread est associé à une connexion particulière identifiée par un socket passé en paramètre
  */
 
-public class ServerThread extends Thread {
+public class ServerThread implements Runnable {
 	private Socket socket ;     
 	private Integer numClient;    
 	private Logger log;           
 	PrintWriter out;
 	BufferedReader in;
-	String lastMessage;       // Utile pour relire le dernier message sans attendre le flux d'entr�e
+
 	/**
 	 * 
 	 * @param socket docket du client
-	 * @param numClient le num�ro du client
+	 * @param numClient le numéro du client
 	 * @throws IOException
 	 */
 	public ServerThread(Socket socket, Integer numClient) throws IOException{
@@ -39,55 +38,44 @@ public class ServerThread extends Thread {
 	
 	/**
 	 * 
-	 * @param className pour instancier la classe concr�te en applelant le fabriquant
-	 * @param readOver = true pour imposer la relecture de flux, sinon l'attente d'un nouveau message
+	 * @param className pour instancier la classe concrète en applelant le fabriquant
 	 * @return instance de la classe className
 	 * @throws IOException
 	 * @throws ProtocolException
 	 */
-	private Request receive(String className, boolean readOver) throws IOException, ProtocolException{
-		log.log(Level.INFO,className);
-		String message;
+	private Request receive() throws IOException, ProtocolException{
+		String message = in.readLine();
+		log.log(Level.INFO, "Message received is : " + message);
 		
-		if(readOver == true) {
-			if(lastMessage == null) {
-				throw new IOException("Pas de message � relire !");
-			}
-			message = lastMessage;
-		}
-		else {
-			message = in.readLine();
-			log.log(Level.INFO, "Message received is : " + message);
-			this.lastMessage = message;
-		}
-		
-		Request req = RequestFactory.createRequest(className, message);
+		Request req = RequestFactory.createRequest(message);
 		if(req == null) {
-			//A pr�ciser l'exception (ClassNotFoundEception, etc)
+			//A préciser l'exception (ClassNotFoundEception, etc)
 			throw new IOException();
 		}
 		
 		return req;
 	}
 	
-	private void send(String className, Request req) throws IOException, ProtocolException {
-		Response res = ResponseFactory.createResponse(className, req.getFields());
-		String message = res.getMessage();
-		log.log(Level.INFO, "Message to send is :"+message);
-
-		out.println(message);
-		out.flush();
+	private void send(Request req) throws IOException, ProtocolException {
+		Response res = ResponseFactory.createResponse(req, out);
+		res.sendMessage();
+		//log.log(Level.INFO, "Message to send is :"+message);
 	}
 	
 	/**
-	 * Cette m�thode permet de communiquer avec le client selon sa requete d'initialisation
-	 * Deux sc�narios possibles 
-	 * Soit le client demande le t�l�chargement d'un fichier 
+	 * Cette méthode permet de communiquer avec le client selon la requete (interested, have ou getpieces)
+	 * Deux scénarios possibles 
+	 * Soit le client demande le téléchargement d'un fichier 
 	 * @see protocoleDownload()
 	 * Soit le client demande l'etat d'un fichier
 	 * @see protocolInformations
 	 */
 	private void communicate() {
+<<<<<<< HEAD
+		try {
+			Request req = receive();
+			send(req);
+=======
 		Request req = null;
 		
 			try {
@@ -175,6 +163,7 @@ public class ServerThread extends Thread {
 	private void protocolInterested(Request req) {
 		try {			
 			this.send(InitResponseServer.class.getName(), req);
+>>>>>>> 5bfb4c2cac7068093ab06a494de180442d33b2c1
 		} catch (IOException e) {
 			e.printStackTrace();
 		    this.out.println("Erreur interne");
@@ -187,8 +176,6 @@ public class ServerThread extends Thread {
 		finally {
 			disconnect();
 		}
-		
-
 	}
 	
 	public void run() {
