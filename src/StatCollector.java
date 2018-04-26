@@ -20,9 +20,11 @@ public class StatCollector extends TimerTask{
 		percentage = ft.getPercentage();
 	}
 	
-	
 	public void run(){
 
+		System.out.println("from stat collector : ");
+		System.out.println("down: " + downSpeed + " \npercentage: " + percentage); 
+		
 		synchronized (this) {
 			if(ft.isSeeding())
 				downSpeed = 0;
@@ -30,7 +32,6 @@ public class StatCollector extends TimerTask{
 				downSpeed = ft.resetAndGet();
 			percentage =  ft.getPercentage();
 		}
-		
 	}
 	
 }

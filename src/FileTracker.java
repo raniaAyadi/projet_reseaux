@@ -36,9 +36,6 @@ public class FileTracker implements java.io.Serializable   {
 	private int currBytes; // bytes per cycle
 	public transient Object statLock;
 	
-	
-
-
 
 	/**
 	 * Constructor to start seeding a new file, it hashes the name, sets the pieces, the bufferMap, size ...
@@ -140,8 +137,7 @@ public class FileTracker implements java.io.Serializable   {
 		synchronized (statLock) {
 			ret = currBytes;
 			currBytes = 0;
-			if(ret == maxBytes)
-				statLock.notify(); // fileDownloader waiting
+			statLock.notify(); // fileDownloader waiting
 		}
 		return ret;
 	}
@@ -180,9 +176,7 @@ public class FileTracker implements java.io.Serializable   {
 			
 		}catch (IOException e){
 			System.err.println("error writing piece with index: " + pieceIndex);
-		}
-		
-		
+		}	
 	}
 
 	/**
@@ -291,7 +285,9 @@ public class FileTracker implements java.io.Serializable   {
 	
 	public double getPercentage(){
 		// TODO : add synchronisation when accessing totalReached
-		return totalReached / numberPieces;
+		double tot = (double) totalReached;
+		double nb = (double ) numberPieces;
+		return (tot/nb)*100;
 	}
 	
 

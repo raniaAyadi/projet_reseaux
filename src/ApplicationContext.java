@@ -1,5 +1,6 @@
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
 
 /**
  * Bootstraps the application by initializing configuration, starting application components according to config, this class is also responsable for managing filetrackers and their conrresponding filedownloaders
@@ -10,6 +11,7 @@ public class ApplicationContext {
 	private static  Map<Integer, String > idMapper;
 	public static Map<String, FileTracker> fileTrackers;
 	public static Map<Integer,StatCollector> statCollectors;
+	public static Map<Integer,Timer> timers;
 	public static TrackerConnection trackerConnection;
 	private static int uniqueIdCounter = 0;
 	
@@ -18,12 +20,15 @@ public class ApplicationContext {
 		ft.id = uniqueIdCounter++;
 		fileTrackers.put(ft.getKey(), ft);
 		idMapper.put(ft.id, ft.getKey());
+		StatCollector st = new StatCollector(ft);
+		statCollectors.put(ft.id,st );
+		Timer t = new Timer();
+		t.scheduleAtFixedRate(st, 100, 1000);
+		timers.put(ft.id, t);
 		if(!ft.isSeeding()){
 			new Thread(new FileDownloader(ft)).start(); 
 		}
-		StatCollector st = new StatCollector(ft);
-		statCollectors.put(ft.id,st );
-		// TODO : timer.scheduleAtFixedRate ... 
+	
 		return ft.id;
 	}
 	
@@ -51,6 +56,7 @@ public class ApplicationContext {
 		fileTrackers = new HashMap<>();
 		statCollectors = new HashMap<>();
 		idMapper = new HashMap<>();
+		timers = new HashMap<>();
 		trackerConnection = new TrackerConnection(Config.trackerIp, Config.trackerPort);
 		Server server = new Server(Config.listenPort);
 		

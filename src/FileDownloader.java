@@ -17,6 +17,7 @@ public class FileDownloader implements Runnable {
 	private List<PeerConnection> connections;
 	
 	FileDownloader(FileTracker ft) throws Exception{
+		
 		this.ft = ft;
 		connections = new ArrayList<>();
 		List<SimpleEntry<String , Integer>> ret =  ApplicationContext.trackerConnection.getfile(ft.getKey());
@@ -32,12 +33,13 @@ public class FileDownloader implements Runnable {
 		return ft.getNumberPieces()/2;
 	}
 	
-	// TODO : update this method
+	
 	/**
 	 * Just a first basic version of the thread
 	 */
 	@Override
 	public void run() {
+		// TODO : update this algorithm
 		// locate last index reached (if reached)
 		boolean found = false;
 		int i = 0;
@@ -65,6 +67,16 @@ public class FileDownloader implements Runnable {
 				synchronized (ft.suspendLock) {
 					try {
 						ft.suspendLock.wait();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			
+			if(!ft.downloadAllowed()){
+				synchronized (ft.statLock) {
+					try {
+						ft.statLock.wait();
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
