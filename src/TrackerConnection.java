@@ -19,12 +19,13 @@ import java.util.Map;
  */
 public class TrackerConnection extends Connection{
 
-	public TrackerConnection(String ip, int port) {
+	public TrackerConnection(String ip, int port) throws UnknownHostException, IOException, ProtocolException {
 		super(ip, port);
+		announce();
 	}
 	
 	
-	public void announce() throws Exception{
+	public void announce() throws UnknownHostException, IOException, ProtocolException {
 		
 		String req = "announce listen " + Config.listenPort + " seed [";
 		List<String> leecher_keys = new ArrayList<>();

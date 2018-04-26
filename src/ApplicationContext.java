@@ -20,12 +20,12 @@ public class ApplicationContext {
 		ft.id = uniqueIdCounter++;
 		fileTrackers.put(ft.getKey(), ft);
 		idMapper.put(ft.id, ft.getKey());
-		StatCollector st = new StatCollector(ft);
-		statCollectors.put(ft.id,st );
-		Timer t = new Timer();
-		t.scheduleAtFixedRate(st, 100, 1000);
-		timers.put(ft.id, t);
 		if(!ft.isSeeding()){
+			StatCollector st = new StatCollector(ft);
+			statCollectors.put(ft.id,st );
+			Timer t = new Timer();
+			t.scheduleAtFixedRate(st, 100, 1000);
+			timers.put(ft.id, t);
 			new Thread(new FileDownloader(ft)).start(); 
 		}
 	
@@ -53,15 +53,18 @@ public class ApplicationContext {
 	
 	public ApplicationContext( String[] args) throws Exception {
 		Config.init(args); 
+		
 		fileTrackers = new HashMap<>();
 		statCollectors = new HashMap<>();
 		idMapper = new HashMap<>();
 		timers = new HashMap<>();
-		trackerConnection = new TrackerConnection(Config.trackerIp, Config.trackerPort);
-		Server server = new Server(Config.listenPort);
 		
 		// persist application state
 		(new Thread(new PersistanceWorker())).start();
+		
+		trackerConnection = new TrackerConnection(Config.trackerIp, Config.trackerPort);
+		
+		Server server = new Server(Config.listenPort);
 		
 		// start upload watcher if specified in configuration file
 		if(Config.uploadPath != null)
@@ -71,7 +74,5 @@ public class ApplicationContext {
 		(new Thread(server)).start();
 
 	}
-
-
 
 }
