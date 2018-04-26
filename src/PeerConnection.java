@@ -63,7 +63,9 @@ public class PeerConnection extends Connection {
 			escapeWhite();
 			Integer index = new Integer(readUntil(':'));
 			accept(":");
+			System.out.println("ft.getpiecesize: " + ft.getPieceSize());
 			byte[] data = new byte[ft.getPieceSize()];
+			System.out.println("data size: " + data.length);
 			int nb = is.read(data);
 			if(nb != ft.getPieceSize()){
 				// TODO: error from the other peer

@@ -14,7 +14,7 @@ public class ApplicationContext {
 	private static int uniqueIdCounter = 0;
 	
 	// it is synchronized since it can be accessed both by the UI listener (by calling UserAction.startLeech) thread and the main thread (construction of the persistence worker)
-	public synchronized static void addFileTracker(FileTracker ft) throws Exception{
+	public synchronized static int addFileTracker(FileTracker ft) throws Exception{
 		ft.id = uniqueIdCounter++;
 		fileTrackers.put(ft.getKey(), ft);
 		idMapper.put(ft.id, ft.getKey());
@@ -23,11 +23,24 @@ public class ApplicationContext {
 			fileDownloaders.put(ft.id, fd);
 			new Thread(fd).start();
 		}
+		return ft.id;
 	}
 	
 	public static void removeFileTracker(Integer id) {
 		fileTrackers.remove(idMapper.get(id));
 		idMapper.remove(id);
+	}
+	
+	/**
+	 * returns file tracker with the id "id"
+	 * @param id
+	 * @return
+	 */
+	public static FileTracker getById(Integer id){
+		if(!idMapper.containsKey(id)){
+			return null;
+		}
+		return fileTrackers.get(idMapper.get(id));
 	}
 	
 	
@@ -48,6 +61,7 @@ public class ApplicationContext {
 		
 		//start the server
 		(new Thread(server)).start();
+
 	}
 
 

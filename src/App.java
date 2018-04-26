@@ -7,9 +7,11 @@ public class App {
 		@SuppressWarnings("unused")
 		ApplicationContext ctx = new ApplicationContext( args);
 		
-		// to test file downlaoder
-		//UserAction.startLeech("Big_data.pdf", 3186700, 16384, "oi+4yDAUL1Z2osykaECpkoAiAhdbT6aj", null);
 
+		//int id = UserAction.startLeech("video.mp4", 21477588, 65536, "ktuY7RlOVhNQdTBmnjk5hh0nWy2qvoWa", null);
+
+
+		
 		// TODO: start up interface listener
 
 	}

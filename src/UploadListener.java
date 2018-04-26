@@ -48,8 +48,14 @@ public class UploadListener implements Runnable {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-						ApplicationContext.fileTrackers.put(newFileTracker.getKey(), newFileTracker);
-						added.add(fl.getName());
+						try {
+							ApplicationContext.addFileTracker(newFileTracker);
+							added.add(fl.getName());
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						
+						
 					}
 
 				}

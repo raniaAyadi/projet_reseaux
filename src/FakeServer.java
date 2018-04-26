@@ -16,6 +16,9 @@ import java.util.Map;
  */
 public class FakeServer {
 	public static void start(Map<String, FileTracker> fileTrackers,int port) throws Exception{
+		
+		
+		System.out.println("listening on port : " + port);
 		ServerSocket s = new ServerSocket(port);
 		while (true) {
 			Socket soc = s.accept();
@@ -65,8 +68,13 @@ public class FakeServer {
 							System.out.println("peer requested an invalid index : " + pieceIndex);
 							System.out.println("returing a string of spaces");
 						}
-						byte[] piece = fileTrackers.get(key).getPiece(pieceIndex);
+						byte[] piece;
+						synchronized (fileTrackers.get(key)) {
+							 piece= fileTrackers.get(key).getPiece(pieceIndex);
+						}
 						os.write(piece);
+						
+						
 						if(i != ls.length-1){
 							pred.write(" ");
 							pred.flush();
@@ -74,6 +82,7 @@ public class FakeServer {
 					}
 					pred.write("]");
 					pred.flush();
+					
 					soc.close();
 					continue;
 				}

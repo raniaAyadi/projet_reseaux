@@ -27,7 +27,9 @@ public class FileTracker implements java.io.Serializable   {
 	private long size; // in bytes
 	private int  pieceSize; // in bytes
 	private int numberPieces;
+	private int totalReached; // speed up isSeeding method
 	private BitSet bufferMap;
+	private boolean suspended;
 
 
 
@@ -47,6 +49,7 @@ public class FileTracker implements java.io.Serializable   {
 			numberPieces = (int) (size/pieceSize);
 			if((size%pieceSize) !=0 )
 				numberPieces++;
+			totalReached = numberPieces; 
 			System.out.println("nb pieces : " + numberPieces);
 			bufferMap = new BitSet( numberPieces);
 			bufferMap.set(0, numberPieces);
@@ -67,11 +70,13 @@ public class FileTracker implements java.io.Serializable   {
 			throw new Exception("file " + filePath + "already exists");
 		else
 			fl.createNewFile();
+		suspended = false;
 		this.fileName = fileName;
 		this.size = size;
 		this.pieceSize = pieceSize;
 		this.key = key;
 		numberPieces = (int) (size/pieceSize);
+		totalReached = 0;
 		if((size%pieceSize) !=0 )
 			numberPieces++;
 		bufferMap = new BitSet(numberPieces);
@@ -86,6 +91,7 @@ public class FileTracker implements java.io.Serializable   {
 	public void addPiece(byte[]piece,int pieceIndex) {
 		if(pieceIndex<0 || pieceIndex >=numberPieces)
 			throw new IndexOutOfBoundsException();
+		// TODO : exception if non valid piece size
 		// trim the fat in case of last piece
 		if(pieceIndex == (numberPieces -1)){
 			int chunksize = (int) (pieceSize - (numberPieces*pieceSize - size)) ;
@@ -94,15 +100,22 @@ public class FileTracker implements java.io.Serializable   {
 			piece = aux;
 		}
 		try{
-			Storage.writePiece(fileName, piece,(int)( pieceIndex * pieceSize) );
+			Storage.writePiece(fileName, piece,(int)( pieceIndex * pieceSize) );	
+			totalReached++;
+			if(bufferMap.get(pieceIndex)){
+				// TODO: remove this after test
+				System.err.println("filetracker : re-writing the same piece ??");
+				System.err.println("this will affect the total reached, (non valid res)"); 
+			}
+			synchronized (this) {
+				bufferMap.set(pieceIndex);
+			}
+			
 		}catch (IOException e){
 			System.err.println("error writing piece with index: " + pieceIndex);
-			return;
 		}
 		
-		synchronized (this) {
-			bufferMap.set(pieceIndex);
-		}
+		
 	}
 
 	/**
@@ -143,11 +156,40 @@ public class FileTracker implements java.io.Serializable   {
 			return bufferMap.get(index);
 		}
 	}
+	
+	/**
+	 * Thread safe
+	 */
+	public void pause(){
+		synchronized (this) {
+			suspended = true;
+		}
+	}
+	
+	/**
+	 * Thread safe
+	 */
+	public void resume(){
+		synchronized (this) {
+			suspended = false;
+			this.notify(); // filedownloader waiting ..
+		}
+	}
+	
+	/**
+	 * Thread safe
+	 * @return
+	 */
+	public boolean isSuspended(){
+		synchronized (this) {
+			return suspended;
+		}
+	}
 
 
 	public boolean isSeeding(){
-		// TODO: update using counter
-		return bufferMap.cardinality() == numberPieces;
+		// TODO: test this
+		return totalReached == numberPieces;
 	}
 
 	/**
@@ -201,16 +243,9 @@ public class FileTracker implements java.io.Serializable   {
 		return key;
 	}
 
-
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-
 	public long getSize() {
 		return size;
 	}
-
 
 	public int getPieceSize() {
 		return pieceSize;
@@ -237,11 +272,8 @@ public class FileTracker implements java.io.Serializable   {
 	}
 
 
-	
-
 	public String getFileName(){
 		return fileName;
 	}
-
 
 }
