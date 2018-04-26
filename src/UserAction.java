@@ -56,12 +56,18 @@ public class UserAction {
 	
 	public static void pauseLeech(Integer id){
 		// TODO : error checking 
-		ApplicationContext.getById(id).pause();
+		FileTracker ft = ApplicationContext.getById(id);
+		if(ft.isSuspended())
+			return;
+		ft.pause();
 	}
 	
 	public static void resumeLeech(Integer id){
-		// TODO: error check
-		ApplicationContext.getById(id).resume();
+		// TODO: error check, why two consecutive resumes, pauseLeech doesn't pause.
+		FileTracker ft = ApplicationContext.getById(id);
+		if(!ft.isSuspended())
+			return;
+		ft.resume();
 	}
 	
 	// user calls this method, gets file metadata from the file tracker, then starts download using startLeech

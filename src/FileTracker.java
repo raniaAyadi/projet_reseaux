@@ -30,6 +30,8 @@ public class FileTracker implements java.io.Serializable   {
 	private int totalReached; // speed up isSeeding method
 	private BitSet bufferMap;
 	private boolean suspended;
+	public transient Object suspendLock; // needed seprate lock for pause/resume
+	
 
 
 
@@ -39,7 +41,6 @@ public class FileTracker implements java.io.Serializable   {
 	 * @throws NoSuchAlgorithmException
 	 */
 	public FileTracker(String fileName,String filePath) throws NoSuchAlgorithmException{
-
 			this.filePath = filePath;
 			this.fileName = fileName;
 			size  =  (new File(filePath)).length();
@@ -53,6 +54,7 @@ public class FileTracker implements java.io.Serializable   {
 			System.out.println("nb pieces : " + numberPieces);
 			bufferMap = new BitSet( numberPieces);
 			bufferMap.set(0, numberPieces);
+			suspendLock = new Object();
 	}
 
 	/**
@@ -81,6 +83,7 @@ public class FileTracker implements java.io.Serializable   {
 			numberPieces++;
 		bufferMap = new BitSet(numberPieces);
 		bufferMap.set(0,numberPieces,false);
+		suspendLock = new Object();
 	}
 
 	/**
@@ -102,12 +105,12 @@ public class FileTracker implements java.io.Serializable   {
 		try{
 			Storage.writePiece(fileName, piece,(int)( pieceIndex * pieceSize) );	
 			totalReached++;
-			if(bufferMap.get(pieceIndex)){
+			if(this.has(pieceIndex)){
 				// TODO: remove this after test
 				System.err.println("filetracker : re-writing the same piece ??");
 				System.err.println("this will affect the total reached, (non valid res)"); 
 			}
-			synchronized (this) {
+			synchronized (bufferMap) {
 				bufferMap.set(pieceIndex);
 			}
 			
@@ -128,7 +131,7 @@ public class FileTracker implements java.io.Serializable   {
 	public byte[] getPiece(int pieceIndex) throws PieceNotAvailableException, IOException  {
 		if(pieceIndex >= numberPieces || pieceIndex <0 )
 			throw new IndexOutOfBoundsException();
-		synchronized (this) {
+		synchronized (bufferMap) {
 			if(!bufferMap.get(pieceIndex)){
 				throw new PieceNotAvailableException();
 			}			
@@ -152,7 +155,7 @@ public class FileTracker implements java.io.Serializable   {
 		if(index <0 || index >= numberPieces){
 			throw new IndexOutOfBoundsException();
 		}
-		synchronized (this) {
+		synchronized (bufferMap) {
 			return bufferMap.get(index);
 		}
 	}
@@ -161,7 +164,7 @@ public class FileTracker implements java.io.Serializable   {
 	 * Thread safe
 	 */
 	public void pause(){
-		synchronized (this) {
+		synchronized (suspendLock) {
 			suspended = true;
 		}
 	}
@@ -170,9 +173,10 @@ public class FileTracker implements java.io.Serializable   {
 	 * Thread safe
 	 */
 	public void resume(){
-		synchronized (this) {
+		synchronized (suspendLock) {
+			if(suspended)
+				suspendLock.notify(); // filedownloader waiting on it ..	
 			suspended = false;
-			this.notify(); // filedownloader waiting ..
 		}
 	}
 	
@@ -181,14 +185,14 @@ public class FileTracker implements java.io.Serializable   {
 	 * @return
 	 */
 	public boolean isSuspended(){
-		synchronized (this) {
+		synchronized (suspendLock) {
 			return suspended;
 		}
 	}
 
 
 	public boolean isSeeding(){
-		// TODO: test this
+		// no need to lock, only filedownloader updates and checks for its value
 		return totalReached == numberPieces;
 	}
 
@@ -256,7 +260,7 @@ public class FileTracker implements java.io.Serializable   {
 	 * @return
 	 */
 	public String getBuffermap(){
-		synchronized (this) {
+		synchronized (bufferMap) {
 			String ret = "";
 			int size = bufferMap.length();
 			

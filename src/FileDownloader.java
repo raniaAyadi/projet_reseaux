@@ -59,18 +59,17 @@ public class FileDownloader implements Runnable {
 		int connIndex = -1;
 		int nb_conns = connections.size();
 		// TODO: treat case where there are no connections
-		while(!ft.isSeeding()){
-			
-			synchronized (ft) {
-				if(ft.isSuspended()){
+		while (!ft.isSeeding()) {
+
+			if (ft.isSuspended()) {
+				synchronized (ft.suspendLock) {
 					try {
-						ft.wait();
+						ft.suspendLock.wait();
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
 				}
 			}
-			
 			
 			// select next connection to use
 			connIndex = (connIndex+1) %nb_conns;
