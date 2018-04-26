@@ -1,5 +1,6 @@
 import java.util.Set;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Map;
 
@@ -8,9 +9,8 @@ public class GetResponseServer extends Response {
 	private static final String DATA ="data";
 	
 
-	public GetResponseServer(PrintWriter out,Map<String, Object> fields) throws ProtocolException, IOException, PieceNotAvailableException {
+	public GetResponseServer(OutputStream out,Map<String, Object> fields) throws ProtocolException, IOException, PieceNotAvailableException {
 		super(out, fields);
-		this.out = out;
 	}
 
 	@Override
@@ -47,28 +47,33 @@ public class GetResponseServer extends Response {
 		
 		@SuppressWarnings("unchecked")
 		Set<Integer> parts = (Set<Integer>)fields.get(Constant.InitResponseServer.PARTS_TO_DOWNLOAD);
+		PrintWriter p = new PrintWriter(out);
 		
 		String initMessage = DATA+SEP+key+SEP+"[";
-		out.print(initMessage);
+		p.print(initMessage);
+		p.flush();
 		
 		int j = 0;
 		for(Integer i : parts) {
 			j++;
 			String s = i.toString()+":";
-			out.print(s);
+			p.print(s);
+			p.flush();
+			
 		    try {
-				out.print(f.getPiece(i));
+				out.write(f.getPiece(i));
+				out.flush();
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new IOException(e.getMessage());
 			}
 		    
 		    if(j<parts.size())
-		    	out.print(SEP);
+		    	p.print(SEP);
 		}
 		
-		out.print("]");
-		out.flush();
+		p.print("]");
+		p.flush();
 	}
 	
 }

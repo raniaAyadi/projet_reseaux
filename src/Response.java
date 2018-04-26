@@ -1,12 +1,12 @@
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.OutputStream;
 import java.util.Map;
 
 abstract public class Response {
 	protected Map<String, Object> fields;   // input
-	protected PrintWriter out;
+	protected OutputStream out;
 	
-	public Response(PrintWriter out, Map<String, Object> fields) throws ProtocolException, IOException, PieceNotAvailableException {
+	public Response(OutputStream out, Map<String, Object> fields) throws ProtocolException, IOException, PieceNotAvailableException {
 		this.fields = fields;
 		this.out = out;
 		

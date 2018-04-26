@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Map;
 
@@ -7,7 +8,7 @@ public class HaveResponseServer extends Response {
 	private static final String HAVE = "have";
 	private static final String SEP =" ";
 
-	public HaveResponseServer(PrintWriter out, Map<String, Object> fields) throws ProtocolException, IOException, PieceNotAvailableException {
+	public HaveResponseServer(OutputStream out, Map<String, Object> fields) throws ProtocolException, IOException, PieceNotAvailableException {
 		super(out, fields);
 	}
 
@@ -34,8 +35,10 @@ public class HaveResponseServer extends Response {
 		String bufferMap = f.getBuffermap();
 		
 		String message = HAVE + SEP + key + SEP + bufferMap;
-		out.print(message);
-		out.flush();
+		PrintWriter p = new PrintWriter(out);
+		
+		p.print(message);
+		p.flush();
 	}
 
 }

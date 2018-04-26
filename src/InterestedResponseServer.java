@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Map;
 
@@ -11,7 +12,7 @@ public class InterestedResponseServer extends Response {
 	public static final String SEP = " ";	
 
 	
-	public InterestedResponseServer(PrintWriter out, Map<String, Object> fields) throws ProtocolException, IOException, PieceNotAvailableException {
+	public InterestedResponseServer(OutputStream out, Map<String, Object> fields) throws ProtocolException, IOException, PieceNotAvailableException {
 		super(out, fields);
 	}
 	
@@ -34,8 +35,9 @@ public class InterestedResponseServer extends Response {
 		out[2] = bufferMap;
 		String message = String.join(SEP, out);
 		
-		this.out.print(message);
-		this.out.flush();
+		PrintWriter p = new PrintWriter(this.out);
+		p.print(message);
+		p.flush();
 	}
 	
 
