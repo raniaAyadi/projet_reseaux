@@ -175,7 +175,7 @@ public class FileTracker implements java.io.Serializable   {
 			}
 			
 		}catch (IOException e){
-			System.err.println("error writing piece with index: " + pieceIndex);
+			//System.err.println("error writing piece with index: " + pieceIndex);
 		}	
 	}
 

@@ -41,8 +41,8 @@ public class Storage {
 
 				break;
 			}catch (IOException e){
-				System.out.println("File write failur, file is used by another process");
-				throw e;
+				//System.out.println("File write failur, file is used by another process");
+				//throw e;
 			}
 		}
 	
