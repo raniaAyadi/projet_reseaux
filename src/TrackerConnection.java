@@ -59,6 +59,7 @@ public class TrackerConnection extends Connection{
 	
 	/**
 	 * Make a look request to tracker, each non null parameter will be added to the list of constraints 
+	 * (tested !)
 	 * 
 	 * @param filename
 	 * @param minFileSize
@@ -107,8 +108,6 @@ public class TrackerConnection extends Connection{
 			ret.add(info);
 		}
 		acceptNext("]");
-		
-		
 		endRequest();
 		return ret;
 	}

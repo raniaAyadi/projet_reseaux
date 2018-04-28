@@ -1,4 +1,4 @@
-
+import java.util.List;
 
 /**
  * This class holds user actions, all methods must be exposed over tcp and mapped to front end 
@@ -29,8 +29,25 @@ public class UserAction {
 		return ApplicationContext.addFileTracker(ft);	
 	}
 	
-	public static void listFilesOnNetwork(){
-		// TODO 
+	/**
+	 * List all files on the network
+	 * @return metadata for all files shared on the network
+	 * @throws Exception
+	 */
+	public static List<FileInfo>  listAll() throws Exception{
+		return searchFiles(null, null, null);
+	}
+	
+	/**
+	 * Search files on the network, only non null constraints will be considered
+	 * @param fileName if set, one or zero entries will be returned 
+	 * @param minSize 
+	 * @param maxSize
+	 * @return list of files on the network corresponding to the selected criteria 
+	 * @throws Exception
+	 */
+	public static List<FileInfo> searchFiles(String fileName,Integer minSize,Integer maxSize) throws Exception{
+		return ApplicationContext.trackerConnection.look(fileName, minSize, maxSize);
 	}
 	
 	public static void getCurrentStats(){
@@ -63,12 +80,6 @@ public class UserAction {
 		if(!ft.isSuspended())
 			return;
 		ft.resume();
-	}
-	
-	// user calls this method, gets file metadata from the file tracker, then starts download using startLeech
-	public static void searchFile(){
-		// TODO: queries to find target file key  
-		// TODO: first implement response object
 	}
 	
 }
