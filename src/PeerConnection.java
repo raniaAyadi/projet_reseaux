@@ -101,9 +101,7 @@ public class PeerConnection extends Connection {
 
 	// interested
 	private void updateBufferMap(FileTracker ft) throws Exception {
-
 		String req = "interested " + ft.getKey();
-		System.out.println("making request: " + req);
 		makeRequest(req);
 		
 		acceptNext("have");

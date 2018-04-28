@@ -73,10 +73,7 @@ public class Config {
 			if (isInt(temp)) {
 				trackerPort = Integer.parseInt(temp);
 				trackerIp = line.getOptionValue("tracker-ip");
-				if (Operation.testAddress(trackerIp, trackerPort)) {
-					cont = false;
-				} else
-					System.out.println("Invalid tracker address specified in args, trying address from config...");
+				cont = false;
 			} else {
 				System.out.println("Invalid tracker-port argument, trying address from config...");
 			}
@@ -87,10 +84,7 @@ public class Config {
 			if (isInt(temp)) {
 				trackerPort = Integer.parseInt(temp);
 				trackerIp = propreties.getProperty("tracker-ip");
-				if (Operation.testAddress(trackerIp, trackerPort)) {
-					cont = false;
-				} else
-					System.out.println("Invalid tracker address specified in config");
+				cont = false;
 			} else {
 				System.out.println("Invalid tracker-port from config file");
 			}

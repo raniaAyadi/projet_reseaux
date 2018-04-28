@@ -40,7 +40,6 @@ public abstract class Connection {
         soc = new Socket(ip,port);
         is = new BufferedInputStream(soc.getInputStream());
 		writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(soc.getOutputStream())), true);	
-		System.out.println("about to send the request "+ request);
 		writer.println(request);
 		writer.flush();
 	}

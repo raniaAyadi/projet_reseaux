@@ -12,17 +12,6 @@ import java.util.BitSet;
 
 public class Operation {
     
-    public static boolean testAddress(String ip,int port){
-    	if(ip == null) return false;
-    	try{
-    		Socket s = new Socket(ip,port);
-    		s.close();
-    		return true;
-    	}catch (Exception e){
-    		return false;
-    	}
-    }
-    
 	public static String bitsetToString(BitSet b){
 		String ret = "";
 		int size = b.length();

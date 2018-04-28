@@ -1,3 +1,4 @@
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -59,10 +60,16 @@ public class ApplicationContext {
 		idMapper = new HashMap<>();
 		timers = new HashMap<>();
 		
+		
 		// persist application state
 		(new Thread(new PersistanceWorker())).start();
 		
-		trackerConnection = new TrackerConnection(Config.trackerIp, Config.trackerPort);
+		try{
+			trackerConnection = new TrackerConnection(Config.trackerIp, Config.trackerPort);
+		}catch(UnknownHostException e){
+			System.out.println("Invalid tracker address => '" + Config.trackerIp + ":" + Config.trackerPort+"'");
+			System.exit(0); 
+		}	
 		
 		Server server = new Server(Config.listenPort);
 		
@@ -71,7 +78,6 @@ public class ApplicationContext {
 			System.out.println("not null");
 			(new Thread(new UploadListener())).start();
 		}
-			
 		
 		//start the server
 		server.start();
