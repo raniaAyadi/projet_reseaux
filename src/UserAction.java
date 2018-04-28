@@ -1,3 +1,5 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 /**
@@ -27,6 +29,24 @@ public class UserAction {
 			path = ".";
 		FileTracker ft = new FileTracker(fileName, size, pieceSize, key, path);
 		return ApplicationContext.addFileTracker(ft);	
+	}
+	
+	/**
+	 * Share new file on the network
+	 * @param fullFilePath 
+	 * @throws Exception
+	 */
+	public static void startSeed(String fullFilePath) throws Exception{
+		File fl = new File(fullFilePath);
+		if(!fl.exists())
+			throw new FileNotFoundException();
+		if(fl.isDirectory())
+			throw new Exception("specified path corresponds to a directory, only files are supported");
+		// TODO : test if file exists on the network, if so tell him to change the name of the file
+		//if(!searchFiles(fl.getName(), null, null).isEmpty())
+		//	throw new FileExistsOnNetworkException();
+		FileTracker ft = new FileTracker(fl);
+		ApplicationContext.addFileTracker(ft);
 	}
 	
 	/**

@@ -37,26 +37,14 @@ public class UploadListener implements Runnable {
 				if (fl.isDirectory())
 					continue;
 				if (!metaFiles.contains(fl.getName())) {
-					// init new filetracker
-
 					if (!added.contains(fl.getName())) {
-						FileTracker newFileTracker = null;
 						try {
-							newFileTracker = new FileTracker(fl.getName(), fl.getAbsolutePath());
-						} catch (NoSuchAlgorithmException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						try {
-							ApplicationContext.addFileTracker(newFileTracker);
+							UserAction.startSeed(fl.getAbsolutePath());
 							added.add(fl.getName());
-						} catch (Exception e) {
-							e.printStackTrace();
+						} catch (Exception e1) {
+							e1.printStackTrace();
 						}
-						
-						
 					}
-
 				}
 			}
 
