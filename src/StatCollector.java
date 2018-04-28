@@ -8,14 +8,18 @@ import java.util.TimerTask;
  */
 public class StatCollector extends TimerTask{
 
+	// do not expose when serializing with Gson
 	private FileTracker ft;
+	public int id; // needed by ui for mapping
 	public int downSpeed;
 	public double percentage;
+	
 	//public double upSpeed; // TODO
 
 	
 	public StatCollector(FileTracker ft){
-		this.ft = ft;	
+		this.ft = ft;
+		id = ft.id;
 		downSpeed = 0;
 		percentage = ft.getPercentage();
 	}

@@ -1,6 +1,8 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class holds user actions, all methods must be exposed over tcp and mapped to front end 
@@ -36,17 +38,17 @@ public class UserAction {
 	 * @param fullFilePath 
 	 * @throws Exception
 	 */
-	public static void startSeed(String fullFilePath) throws Exception{
+	public static int startSeed(String fullFilePath) throws Exception{
 		File fl = new File(fullFilePath);
 		if(!fl.exists())
 			throw new FileNotFoundException();
 		if(fl.isDirectory())
-			throw new Exception("specified path corresponds to a directory, only files are supported");
+			throw new Exception("specified path corresponds to a directory, only files are supported"); // TODO : custom exception
 		// TODO : test if file exists on the network, if so tell him to change the name of the file
 		//if(!searchFiles(fl.getName(), null, null).isEmpty())
 		//	throw new FileExistsOnNetworkException();
 		FileTracker ft = new FileTracker(fl);
-		ApplicationContext.addFileTracker(ft);
+		return ApplicationContext.addFileTracker(ft);
 	}
 	
 	/**
@@ -67,11 +69,46 @@ public class UserAction {
 	 * @throws Exception
 	 */
 	public static List<FileInfo> searchFiles(String fileName,Integer minSize,Integer maxSize) throws Exception{
-		return ApplicationContext.trackerConnection.look(fileName, minSize, maxSize);
+		List<FileInfo> ret =  ApplicationContext.trackerConnection.look(fileName, minSize, maxSize);
+		for(FileInfo f : ret)
+			if(ApplicationContext.fileTrackers.containsKey(f.key)) f.managed = true;
+			else f.managed = false;
+		return ret;
 	}
 	
-	public static void getCurrentStats(){
-		// TODO: first: implement the FileStat data structure
+	/**
+	 * Get all currently managed files (being served or downloaded by the peer)
+	 * @return A list of Filetrackers is returned, so its up to the UI exposer to filter needed information 
+	 */
+	public List<FileTracker> getManagedFiles(){
+		Map<String,  FileTracker> m = ApplicationContext.fileTrackers;
+		List<FileTracker> ret = new ArrayList<>();
+		for(Map.Entry<String, FileTracker> entry : m.entrySet())
+			ret.add(entry.getValue());
+		return ret;
+	}
+	
+	/**
+	 * Get download/upload stats (percentage, downspeed, upspeed ...), information is mapped to the list of managed files using 
+	 * field 'id'
+	 * @return 
+	 */
+	public List<StatCollector> getStats(){
+		Map<Integer,StatCollector> m = ApplicationContext.statCollectors;
+		List<StatCollector> ret = new ArrayList<>();
+		for(Map.Entry<Integer, StatCollector> entry : m.entrySet())
+			ret.add(entry.getValue());
+		return ret;
+	}
+	
+	/**
+	 * This is not always exposed (consumes bandwidth), gets displayed only on user demand
+	 * @param id
+	 * @return String formatted BufferMap
+	 * @throws NumberFormatException
+	 */
+	public String getBufferMap(String id) throws NumberFormatException{ // TODO: throws also FileTracker not found
+		return ApplicationContext.getById(Integer.parseInt(id)).getBuffermap();
 	}
 	
 	
