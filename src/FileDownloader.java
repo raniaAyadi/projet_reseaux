@@ -62,7 +62,8 @@ public class FileDownloader implements Runnable {
 		int nb_conns = connections.size();
 		// TODO: treat case where there are no connections
 		while (!ft.isSeeding()) {
-
+			
+			// wait if user paused download
 			if (ft.isSuspended()) {
 				synchronized (ft.suspendLock) {
 					try {
@@ -73,6 +74,7 @@ public class FileDownloader implements Runnable {
 				}
 			}
 			
+			// wait in order to respect max down speed constraint
 			if(!ft.downloadAllowed()){
 				synchronized (ft.statLock) {
 					try {
@@ -83,7 +85,11 @@ public class FileDownloader implements Runnable {
 				}
 			}
 			
-			// select next connection to use
+			if(ft.isTerminated())
+				break;
+			
+			
+			// select pieces to download, and which connection to use 
 			connIndex = (connIndex+1) %nb_conns;
 			PeerConnection con = connections.get(connIndex);
 			List<Integer> req = new ArrayList<>();
@@ -100,7 +106,7 @@ public class FileDownloader implements Runnable {
 			}
 			
 		}
-		System.out.println("downlaod complete");
+		System.out.println("downlaod completed");
 	}
 
 	

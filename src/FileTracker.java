@@ -3,6 +3,8 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.BitSet;
 
+import javax.swing.plaf.synth.SynthSpinnerUI;
+
 import org.jasypt.util.password.BasicPasswordEncryptor;
 
 
@@ -35,6 +37,7 @@ public class FileTracker implements java.io.Serializable   {
 	private int maxBytes; // max allowed in one cyle
 	private int currBytes; // bytes per cycle
 	public transient Object statLock;
+	private boolean stop; // used to terminate fileDownloader thread (without using the deprecated stop function)
 	
 
 	/**
@@ -58,6 +61,7 @@ public class FileTracker implements java.io.Serializable   {
 			bufferMap.set(0, numberPieces);
 			suspendLock = new Object(); // not necessary, no file downloader will be instaciated ! 
 			statLock = new Object();
+			stop = false;
 	}
 
 	
@@ -95,6 +99,7 @@ public class FileTracker implements java.io.Serializable   {
 		maxBytes = -1; // unlimeted
 		currBytes = 0;
 		statLock = new Object();
+		stop = false;
 	}
 	
 	/**
@@ -108,6 +113,30 @@ public class FileTracker implements java.io.Serializable   {
 			currBytes = 0;
 		}
 	}
+	
+	
+	/**
+	 * Thread safe
+	 * Mark FileTracker as non managed (simulate signal to end FileDownloader)
+	 * @return 
+	 */
+	public void terminate(){
+		synchronized (this) {
+			stop = true;
+		}
+	}
+	
+	/**
+	 * Thread safe
+	 * Indicates to the FileDownloader that it must stop downloading
+	 * @return
+	 */
+	public boolean isTerminated(){
+		synchronized (this) {
+			return stop;
+		}
+	}
+	
 	
 	/**
 	 * Thread safe
@@ -308,6 +337,7 @@ public class FileTracker implements java.io.Serializable   {
 		}
 		System.out.println("");
 	}
+	
 
 	public int getNumberPieces(){
 		return numberPieces;

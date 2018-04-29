@@ -9,7 +9,7 @@ import java.util.Timer;
  *
  */
 public class ApplicationContext {
-	private static  Map<Integer, String > idMapper;
+	public static  Map<Integer, String > idMapper;
 	public static Map<String, FileTracker> fileTrackers;
 	public static Map<Integer,StatCollector> statCollectors;
 	public static Map<Integer,Timer> timers;
@@ -33,11 +33,6 @@ public class ApplicationContext {
 		return ft.id;
 	}
 	
-	public static void removeFileTracker(Integer id) {
-		fileTrackers.remove(idMapper.get(id));
-		idMapper.remove(id);
-		// TODO: cordinate this with UserAction.removeFile()
-	}
 	
 	/**
 	 * returns file tracker with the id "id"

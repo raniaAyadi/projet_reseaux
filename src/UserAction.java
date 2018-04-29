@@ -3,6 +3,9 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+
+
 
 /**
  * This class holds user actions, all methods must be exposed over tcp and mapped to front end 
@@ -113,14 +116,23 @@ public class UserAction {
 	
 	
 	/**
-	 * Stop leeching/seeding 
+	 * Stop managing the file 
 	 */
 	public static void removeFile(Integer id){
-		// TODO
-		// will i need maps for file downlaoder and stat collector in appContext or can i do it otherwise (through filetracker ?)
-		// remove filetracker reference and set some attribute indicating finish state, threads automatically exits and Filetracker becomes
-		// object of garbage collector, in this case you should update persistanceWorker to take that variable into consideration (do not 
-		// persist any more
+		// TODO: throw exception if id non valid
+		FileTracker ref = ApplicationContext.getById(id);
+		Timer t =  ApplicationContext.timers.get(id);
+		ApplicationContext.idMapper.remove(id);
+		ApplicationContext.fileTrackers.remove(ref.getKey());
+		ApplicationContext.timers.remove(id);	
+		
+		ref.terminate();
+		if(t != null)
+			t.cancel();
+		
+		File metafile = new File(Config.metaPath +   File.separator +  ref.getFileName() + ".ser");
+		if(metafile.exists())
+			metafile.delete();
 	}
 	
 	public static void pauseLeech(Integer id){
