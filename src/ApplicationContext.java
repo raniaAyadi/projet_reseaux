@@ -76,6 +76,8 @@ public class ApplicationContext {
 		
 		//start the server
 		server.start();
+		
+		(new Thread(new UiServer())).start();
 
 	}
 

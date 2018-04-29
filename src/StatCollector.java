@@ -8,8 +8,7 @@ import java.util.TimerTask;
  */
 public class StatCollector extends TimerTask{
 
-	// do not expose when serializing with Gson
-	private FileTracker ft;
+	transient private FileTracker ft; // transient => Gson unExpose
 	public int id; // needed by ui for mapping
 	public int downSpeed;
 	public double percentage;

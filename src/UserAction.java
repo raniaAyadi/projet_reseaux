@@ -83,7 +83,7 @@ public class UserAction {
 	 * Get all currently managed files (being served or downloaded by the peer)
 	 * @return A list of Filetrackers is returned, so its up to the UI exposer to filter needed information 
 	 */
-	public List<FileTracker> getManagedFiles(){
+	public static List<FileTracker> getManagedFiles(){
 		Map<String,  FileTracker> m = ApplicationContext.fileTrackers;
 		List<FileTracker> ret = new ArrayList<>();
 		for(Map.Entry<String, FileTracker> entry : m.entrySet())
@@ -96,7 +96,7 @@ public class UserAction {
 	 * field 'id'
 	 * @return 
 	 */
-	public List<StatCollector> getStats(){
+	public static List<StatCollector> getStats(){
 		Map<Integer,StatCollector> m = ApplicationContext.statCollectors;
 		List<StatCollector> ret = new ArrayList<>();
 		for(Map.Entry<Integer, StatCollector> entry : m.entrySet())
@@ -110,7 +110,7 @@ public class UserAction {
 	 * @return String formatted BufferMap
 	 * @throws NumberFormatException
 	 */
-	public String getBufferMap(String id) throws NumberFormatException{ // TODO: throws also FileTracker not found
+	public static String getBufferMap(String id) throws NumberFormatException{ // TODO: throws also FileTracker not found
 		return ApplicationContext.getById(Integer.parseInt(id)).getBuffermap();
 	}
 	
