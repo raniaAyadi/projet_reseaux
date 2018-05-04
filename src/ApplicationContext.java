@@ -15,6 +15,7 @@ public class ApplicationContext {
 	public static Map<Integer,Timer> timers;
 	public static TrackerConnection trackerConnection;
 	private static int uniqueIdCounter = 0;
+	private static Timer periodicAnnounce;
 	
 	// it is synchronized since it can be accessed both by the UI listener (by calling UserAction.startLeech) thread and the main thread (construction of the persistence worker)
 	public synchronized static int addFileTracker(FileTracker ft) throws Exception{
@@ -54,10 +55,7 @@ public class ApplicationContext {
 		statCollectors = new HashMap<>();
 		idMapper = new HashMap<>();
 		timers = new HashMap<>();
-		
-		
-		// persist application state
-		(new Thread(new PersistanceWorker())).start();
+		periodicAnnounce = new Timer();
 		
 		try{
 			trackerConnection = new TrackerConnection(Config.trackerIp, Config.trackerPort);
@@ -65,6 +63,9 @@ public class ApplicationContext {
 			System.out.println("Invalid tracker address => '" + Config.trackerIp + ":" + Config.trackerPort+"'");
 			System.exit(0); 
 		}	
+		
+		// persist application state
+		(new Thread(new PersistanceWorker())).start();
 		
 		Server server = new Server(Config.listenPort);
 		
@@ -77,7 +78,10 @@ public class ApplicationContext {
 		//start the server
 		server.start();
 		
-		(new Thread(new UiServer())).start();
+		//start periodic communication
+		this.periodicAnnounce.scheduleAtFixedRate(new PeriodicAnnounce(), 0, Config.updatePeriod);
+		
+		//(new Thread(new UiServer())).start();
 
 	}
 

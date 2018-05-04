@@ -8,6 +8,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.logging.Logger;
 
 /**
  * Abstract class providing basic tcp connection utilities like  establishing connection, sending request and other methods 
@@ -21,11 +22,13 @@ public abstract class Connection {
 	protected BufferedInputStream is;
 	protected PrintWriter writer;
 	protected Socket soc;
+	protected Logger log; //pour débogage
 	
 	
 	public Connection(String ip,int port){
 		this.ip = ip;
 		this.port = port;
+		this.log = Logger.getLogger(this.getClass().getName());
 	}
 	
 	/**

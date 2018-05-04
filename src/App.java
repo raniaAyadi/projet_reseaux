@@ -8,7 +8,7 @@ public class App {
 		
 		@SuppressWarnings("unused")
 		ApplicationContext ctx = new ApplicationContext( args);
-
+		UserAction.download("dot.png", null, null, null);
 		//int id = UserAction.startSeed("C:\\Users\\msi\\workspace\\test-project\\adem.txt");
 		//int id = UserAction.startLeech("class_diagram.gif", 30945, 64, "yzw9NtHFBuTlVQwFP/qO2dBIhS4ymERf", null);
 		

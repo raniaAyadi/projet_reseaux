@@ -1,13 +1,7 @@
-import java.awt.SecondaryLoop;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.logging.Level;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,43 +12,47 @@ import java.util.Map;
  *
  */
 public class TrackerConnection extends Connection{
-
+	
 	public TrackerConnection(String ip, int port) throws UnknownHostException, IOException, ProtocolException {
 		super(ip, port);
 		announce();
 	}
 	
-	
+	//à vérfier si " leech[] " est obsolète !
 	public void announce() throws UnknownHostException, IOException, ProtocolException {
 		
 		String req = "announce listen " + Config.listenPort + " seed [";
-		List<String> leecher_keys = new ArrayList<>();
+		//List<String> leecher_keys = new ArrayList<>();
 		boolean first = true;
 		for (Map.Entry<String, FileTracker> entry : ApplicationContext.fileTrackers.entrySet()) {
 			if(!first) req+=" ";
 			else first = false;
 			FileTracker ft = entry.getValue();
-			if(!ft.isSeeding()){
-				leecher_keys.add(ft.getKey());
+			if(!ft.hasPart()){
+				//leecher_keys.add(ft.getKey())
 				continue;
 			}
 			req+=ft.getFileName() + " "+ ft.getSize() + " " + ft.getPieceSize() + " " + ft.getKey();
 		}
 		req+="]";
-		if(leecher_keys.size() !=0){
-			req+=" leech [";
-			for(int i =0 ;i< leecher_keys.size();i++){
-				req+=leecher_keys.get(i);
-				if(i != leecher_keys.size()-1){
-					req+= " ";
-				}
-			}
-			req+="]";
-		}	
+		
+//		if(leecher_keys.size() !=0){
+//			req+=" leech [";
+//			for(int i =0 ;i< leecher_keys.size();i++){
+//				req+=leecher_keys.get(i);
+//				if(i != leecher_keys.size()-1){
+//					req+= " ";
+//				}
+//			}
+//			req+="]";
+//		}	
 		makeRequest(req);
+		this.log.log(Level.INFO, req+" est envoyé au tracker");
+		
 		escapeWhite();
 		acceptNext("ok");
 		endRequest();
+		
 	}
 	
 	/**
@@ -91,6 +89,8 @@ public class TrackerConnection extends Connection{
 		req+="]";
 		
 		makeRequest(req);
+		this.log.log(Level.INFO, req+" est envoyé au tracker");
+
 		List<FileInfo> ret = new ArrayList<>();
 		
 		acceptNext("list");
@@ -117,6 +117,8 @@ public class TrackerConnection extends Connection{
 
 		String request = "getfile " + key; 
 		makeRequest(request);
+		this.log.log(Level.INFO, request+" est envoyé au tracker");
+
 		List<SimpleEntry<String, Integer>> ret = new ArrayList<>();
 	
 		acceptNext("peers");

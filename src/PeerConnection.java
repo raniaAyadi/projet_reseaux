@@ -20,6 +20,7 @@ import java.util.ArrayList;
  *
  */
 public class PeerConnection extends Connection {
+	private BitSet bufferMap; // the bitmap of the file in the
 
 	public PeerConnection(String ip, int port, FileTracker ft) throws Exception {
 		super(ip, port);
@@ -37,7 +38,6 @@ public class PeerConnection extends Connection {
 		}
 		System.out.println("");
 	}
-	private BitSet bufferMap; // the bitmap of the file in the
 
 	// TODO: handel io/protocole exception at this level !! also all the other methods and the trackerconnection methods
 	public Map<Integer, byte[]> getpieces( List<Integer> offsets,FileTracker ft) throws Exception {
@@ -87,7 +87,7 @@ public class PeerConnection extends Connection {
 	 * @throws UnknownHostException 
 	 * @throws ProtocolException 
 	 */
-	public String have(String myBufferMap,String key) throws UnknownHostException, IOException, ProtocolException{
+	public void have(String myBufferMap,String key) throws UnknownHostException, IOException, ProtocolException{
 		String req = "have " + key + " " + myBufferMap;
 		makeRequest(req);
 		acceptNext("have");
@@ -96,7 +96,8 @@ public class PeerConnection extends Connection {
 		String ret = readUntil(' ');
 		escapeWhite();
 		endRequest();
-		return ret;
+		
+		setBufferMap(ret);
 	}
 
 	// interested
@@ -117,13 +118,21 @@ public class PeerConnection extends Connection {
 			// TODO : error throw exception
 			System.out.println("error parsing the buffer map of response returned by another peer");
 		}
-		
+		setBufferMap(strBuf);
+
+		endRequest();
+	}
+	
+	private void setBufferMap(String strBuf) {
 		bufferMap = new BitSet(strBuf.length());
 		for (int i = 0; i < strBuf.length(); i++)
 			if (strBuf.charAt(i) == '1')
 				bufferMap.set(i, true);
 			else
 				bufferMap.set(i, false);
-		endRequest();
+	}
+	
+	public String getBufferMap() {
+		return Operation.bitsetToString(bufferMap);
 	}
 }

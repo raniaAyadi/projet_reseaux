@@ -31,8 +31,7 @@ public class Server extends Thread {
 		this.portNum = portNum;
 		this.threadList = new ArrayList<ServerThread>(); 
 		
-		int nbThread = 3 ;//Integer.parseInt((String)config.getField(Constant.Config.NB_THREAD));
-		executor = Executors.newFixedThreadPool(nbThread);
+		executor = Executors.newFixedThreadPool(Config.poolSize);
 
 		listen();
 	}

@@ -1,9 +1,12 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 
@@ -13,7 +16,22 @@ import java.util.Timer;
  *
  */
 public class UserAction {
+	private static Logger log = Logger.getLogger(UserAction.class.getName());
 
+	//On suppose que la tracker retourne aprés request look un seul fichier
+	public static void download(String fileName,Integer minSize,Integer maxSize, String path) throws Exception{
+		List<FileInfo> files = searchFiles(fileName, minSize, maxSize);
+		
+		log.log(Level.INFO, "size of look-files returned by tracker : "+files.size());
+		if(files.isEmpty()) {
+			throw new FileNotAvailableException("File not avaible in network actually");
+		}
+		
+		//TODO size > 1
+		FileInfo f = files.get(0);
+		startLeech(f.fileName, f.fileSize, f.pieceSize, f.key, path);
+	}
+	
 	/**
 	 * 
 	 * User must get all these are information from the tracker, except path which he will have to chose

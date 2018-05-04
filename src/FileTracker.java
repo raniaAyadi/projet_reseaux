@@ -379,5 +379,16 @@ public class FileTracker implements java.io.Serializable   {
 	public String getFileName(){
 		return fileName;
 	}
-
+	
+	public boolean hasPart() {
+		int size = bufferMap.length();
+		for(int i=0; i<size; i++) {
+			if(bufferMap.get(i)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 }

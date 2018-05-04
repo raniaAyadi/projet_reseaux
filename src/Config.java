@@ -7,6 +7,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
@@ -30,6 +31,9 @@ public class Config {
 	public static int trackerPort;
 	public static String trackerIp;
 
+	public static int poolSize;
+	public static int updatePeriod;
+	
 	public static String metaPath;
 	public static String downloadPath;
 	public static String uploadPath;
@@ -137,6 +141,16 @@ public class Config {
 		}
 		validateDirectory(metaPath); // required!
 
+		updatePeriod = 5000;
+		if (propreties.containsKey("update-period")) {
+			updatePeriod = Integer.parseInt(propreties.getProperty("update-period"));
+		}
+		
+		poolSize = 5;
+		if(propreties.containsKey("pool-size")) {
+			poolSize = Integer.parseInt(propreties.getProperty("pool-size"));
+		}
+		
 		// upload and download paths are optional, gets set if specified in
 		// config file (after validation else any invalid path will be removed 
 		// from the config file (persist method only persists non null properties)
@@ -181,6 +195,8 @@ public class Config {
 		propreties.setProperty("tracker-port", Integer.toString(trackerPort));
 		propreties.setProperty("tracker-ip", trackerIp);
 		propreties.setProperty("meta-path", metaPath);
+		propreties.setProperty("update-period", Integer.toString(updatePeriod));
+		propreties.setProperty("pool-size", Integer.toString(poolSize));
 
 		if (downloadPath != null)
 			propreties.setProperty("download-path", downloadPath);
@@ -228,7 +244,13 @@ public class Config {
 				.withDescription(
 						"Path for the configuration file, if not specified, default path(current directory) will be used")
 				.hasArg().withArgName("String").create());
-
+		options.addOption(OptionBuilder.withLongOpt("update-period")
+				.withDescription("Schedule communication Peer-Peer and Tracker-Peer every update period")
+				.hasArg().withArgName("Number").create());
+		options.addOption(OptionBuilder.withLongOpt("pool-size")
+				.withDescription("Limit Peer-Peer conenction number")
+				.hasArg().withArgName("Number").create());
+		
 		return options;
 	}
 

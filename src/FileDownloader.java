@@ -1,5 +1,6 @@
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 
@@ -15,9 +16,9 @@ public class FileDownloader implements Runnable {
 	
 	private FileTracker ft;
 	private List<PeerConnection> connections;
+	private Swarm swarm;
 	
 	FileDownloader(FileTracker ft) throws Exception{
-		
 		this.ft = ft;
 		connections = new ArrayList<>();
 		List<SimpleEntry<String , Integer>> ret =  ApplicationContext.trackerConnection.getfile(ft.getKey());
@@ -26,6 +27,10 @@ public class FileDownloader implements Runnable {
 			PeerConnection con = new PeerConnection(ent.getKey(), ent.getValue().intValue(), ft);
 			connections.add(con);
 		}
+		
+		this.swarm = new Swarm(ft, connections);
+		Timer timer = new Timer();
+		timer.scheduleAtFixedRate(swarm, 0, Config.updatePeriod);
 	}
 	
 	private int getRandom(){

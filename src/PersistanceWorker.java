@@ -47,6 +47,8 @@ public class PersistanceWorker implements Runnable {
 				ft = (FileTracker) in.readObject();
 				in.close();
 				fileIn.close();
+				System.out.println(ft.getKey());
+				ApplicationContext.addFileTracker(ft);	
 			} catch (IOException i) {
 				i.printStackTrace();
 				return;
@@ -55,7 +57,6 @@ public class PersistanceWorker implements Runnable {
 				c.printStackTrace();
 				return;
 			}
-			ApplicationContext.addFileTracker(ft);	
 		}
 	}
 
