@@ -24,7 +24,7 @@ public class UserAction {
 		
 		log.log(Level.INFO, "size of look-files returned by tracker : "+files.size());
 		if(files.isEmpty()) {
-			throw new FileNotAvailableException("File not avaible in network actually");
+			//throw new FileNotAvailableException("File not avaible in network actually");
 		}
 		
 		//TODO size > 1
@@ -151,6 +151,11 @@ public class UserAction {
 		File metafile = new File(Config.metaPath +   File.separator +  ref.getFileName() + ".ser");
 		if(metafile.exists())
 			metafile.delete();
+		if(ref.isSeeding())
+			return;
+		File fl = new File(ref.getFilePath());
+		if(fl.exists())
+			fl.delete();
 	}
 	
 	public static void pauseLeech(Integer id){
