@@ -12,6 +12,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import jdk.nashorn.internal.runtime.PrototypeObject;
+
 /**
  * 
  * In order for the application to run, a list of configuration global variables
@@ -34,6 +36,7 @@ public class Config {
 	public static int poolSize;
 	public static int updatePeriod;
 	public static int peerConnectionNumber;
+	public static int ttlSearchFile;
 	
 	public static String metaPath;
 	public static String downloadPath;
@@ -157,6 +160,10 @@ public class Config {
 			peerConnectionNumber = Integer.parseInt(propreties.getProperty("peer-connection-number"));
 		}
 		
+		ttlSearchFile = 20000;
+		if(propreties.contains("ttl-search-file")) {
+			ttlSearchFile = Integer.parseInt(propreties.getProperty("ttl-search-file"));
+		}
 		
 		// upload and download paths are optional, gets set if specified in
 		// config file (after validation else any invalid path will be removed 
@@ -205,6 +212,7 @@ public class Config {
 		propreties.setProperty("update-period", Integer.toString(updatePeriod));
 		propreties.setProperty("pool-size", Integer.toString(poolSize));
 		propreties.setProperty("peer-connection-number", Integer.toString(peerConnectionNumber));
+		propreties.setProperty("ttl-search-file", Integer.toString(ttlSearchFile));
 
 		if (downloadPath != null)
 			propreties.setProperty("download-path", downloadPath);
@@ -261,6 +269,9 @@ public class Config {
 		options.addOption(OptionBuilder.withLongOpt("peer-connection-number")
 				.withDescription("Limit Peer-Peer download conenction number")
 				.hasArg().withArgName("Number").create());
+		options.addOption(OptionBuilder.withLongOpt("ttl-search-file")
+				.withDescription("The limit time for file searching through the network")
+				.hasArg().withArgName("Numner").create());
 		
 		return options;
 	}

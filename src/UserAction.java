@@ -87,14 +87,26 @@ public class UserAction {
 	 * @param minSize 
 	 * @param maxSize
 	 * @return list of files on the network corresponding to the selected criteria 
+	 * @throws FileNotAvailableException  if the search fail after TTL
 	 * @throws Exception
 	 */
-	public static List<FileInfo> searchFiles(String fileName,Integer minSize,Integer maxSize) throws Exception{
-		List<FileInfo> ret =  ApplicationContext.trackerConnection.look(fileName, minSize, maxSize);
-		for(FileInfo f : ret)
-			if(ApplicationContext.fileTrackers.containsKey(f.key)) f.managed = true;
-			else f.managed = false;
-		return ret;
+	public static List<FileInfo> searchFiles(String fileName,Integer minSize,Integer maxSize) throws FileNotAvailableException {
+		long startTime = System.currentTimeMillis();
+		List<FileInfo> ret;
+		while( (System.currentTimeMillis() - startTime) < Config.ttlSearchFile) {
+			try {
+				ret = ApplicationContext.trackerConnection.look(fileName, minSize, maxSize);
+				for(FileInfo f : ret)
+					if(ApplicationContext.fileTrackers.containsKey(f.key)) f.managed = true;
+					else f.managed = false;
+				return ret;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
+		throw new FileNotAvailableException("The file does not exist");
 	}
 	
 	/**
