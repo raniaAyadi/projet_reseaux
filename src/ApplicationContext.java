@@ -1,5 +1,7 @@
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 
@@ -14,6 +16,7 @@ public class ApplicationContext {
 	public static Map<Integer,StatCollector> statCollectors;
 	public static Map<Integer,Timer> timers;
 	public static TrackerConnection trackerConnection;
+	private static List<PeerConnection> peerConnection;
 	private static int uniqueIdCounter = 0;
 	private static Timer periodicAnnounce;
 	
@@ -56,6 +59,7 @@ public class ApplicationContext {
 		idMapper = new HashMap<>();
 		timers = new HashMap<>();
 		periodicAnnounce = new Timer();
+		peerConnection = new ArrayList<>();
 		
 		try{
 			trackerConnection = new TrackerConnection(Config.trackerIp, Config.trackerPort);

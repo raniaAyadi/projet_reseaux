@@ -26,6 +26,7 @@ public class HaveResponseServer extends Response {
 		if(bufferFile.length() != bufferMap.length()) {
 			throw new ProtocolException("Vérifier le buffer Map "+bufferMap);
 		}
+		
 	}
 
 	@Override

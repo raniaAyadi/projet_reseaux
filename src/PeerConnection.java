@@ -20,13 +20,15 @@ import java.util.ArrayList;
  *
  */
 public class PeerConnection extends Connection {
-	private BitSet bufferMap; // the bitmap of the file in the
-
+	private BitSet bufferMap; // the bitmap of the file in the	
 	public PeerConnection(String ip, int port, FileTracker ft) throws Exception {
 		super(ip, port);
 		updateBufferMap(ft);
 	}
 	
+	public PeerConnection(PeerConnection p, FileTracker ft) throws Exception {
+		super(p.getIp(), p.getPort());
+	}
 	
 	// just for debug
 	public  void printbuffer(FileTracker ft){
@@ -75,6 +77,7 @@ public class PeerConnection extends Connection {
 			ret.put(index, data);
 		}
 		endRequest();
+		
 		return ret;
 	}
 	
@@ -114,7 +117,7 @@ public class PeerConnection extends Connection {
 		
 		escapeWhite();
 		String strBuf = readUntil(' ');
-		if(strBuf.length() !=  ft.getNumberPieces()){
+		if(strBuf.length() !=  ft.getBuffermap().length()){
 			// TODO : error throw exception
 			System.out.println("error parsing the buffer map of response returned by another peer");
 		}

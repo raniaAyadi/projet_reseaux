@@ -1,10 +1,7 @@
 import java.io.File;
 import java.io.IOException;
+import java.nio.CharBuffer;
 import java.security.NoSuchAlgorithmException;
-import java.util.BitSet;
-
-import javax.swing.plaf.synth.SynthSpinnerUI;
-
 import org.jasypt.util.password.BasicPasswordEncryptor;
 
 
@@ -29,8 +26,8 @@ public class FileTracker implements java.io.Serializable   {
 	private long size; // in bytes
 	private int  pieceSize; // in bytes
 	private int numberPieces;
-	private int totalReached; // speed up isSeeding method
-	private BitSet bufferMap;
+	private Integer totalReached; // speed up isSeeding method
+	private String bufferMap;
 	private boolean suspended;
 	public transient Object suspendLock; // needed seprate lock for pause/resume
 	
@@ -56,9 +53,12 @@ public class FileTracker implements java.io.Serializable   {
 			if((size%pieceSize) !=0 )
 				numberPieces++;
 			totalReached = numberPieces; 
-			System.out.println("nb pieces : " + numberPieces);
-			bufferMap = new BitSet( numberPieces);
-			bufferMap.set(0, numberPieces);
+			
+			CharBuffer aux = CharBuffer.allocate(numberPieces);
+			for(int i=0; i<numberPieces; i++)
+				aux.put(i, '1');
+			this.bufferMap = aux.toString();
+			
 			suspendLock = new Object(); // not necessary, no file downloader will be instaciated ! 
 			statLock = new Object();
 			stop = false;
@@ -93,14 +93,18 @@ public class FileTracker implements java.io.Serializable   {
 		totalReached = 0;
 		if((size%pieceSize) !=0 )
 			numberPieces++;
-		bufferMap = new BitSet(numberPieces);
-		bufferMap.set(0,numberPieces,false);
+		
+		CharBuffer aux = CharBuffer.allocate(numberPieces);
+		for(int i=0; i<numberPieces; i++)
+			aux.put(i, '0');
+		this.bufferMap = aux.toString();
+		
 		suspendLock = new Object();
 		maxBytes = -1; // unlimeted
 		currBytes = 0;
 		statLock = new Object();
 		stop = false;
-	}
+}
 	
 	/**
 	 * Thread safe
@@ -195,14 +199,21 @@ public class FileTracker implements java.io.Serializable   {
 		}
 		try{
 			Storage.writePiece(fileName, piece,(int)( pieceIndex * pieceSize) );	
-			totalReached++;
 			if(this.has(pieceIndex)){
 				// TODO: remove this after test
 				System.err.println("filetracker : re-writing the same piece ??");
 				System.err.println("this will affect the total reached, (non valid res)"); 
 			}
 			synchronized (bufferMap) {
-				bufferMap.set(pieceIndex);
+				CharBuffer aux = CharBuffer.allocate(numberPieces);
+				int size = bufferMap.length();
+				for(int i=0; i<size; i++)
+					aux.put(i, bufferMap.charAt(i));
+				aux.put(pieceIndex, '1');
+				bufferMap = aux.toString();
+			}
+			synchronized (totalReached) {
+				totalReached++;
 			}
 			synchronized (statLock) {
 				currBytes+= pieceSize;
@@ -224,7 +235,7 @@ public class FileTracker implements java.io.Serializable   {
 		if(pieceIndex >= numberPieces || pieceIndex <0 )
 			throw new IndexOutOfBoundsException();
 		synchronized (bufferMap) {
-			if(!bufferMap.get(pieceIndex)){
+			if(bufferMap.charAt(pieceIndex) == '0'){
 				throw new PieceNotAvailableException();
 			}			
 		}
@@ -248,7 +259,7 @@ public class FileTracker implements java.io.Serializable   {
 			throw new IndexOutOfBoundsException();
 		}
 		synchronized (bufferMap) {
-			return bufferMap.get(index);
+			return bufferMap.charAt(index) == '1';
 		}
 	}
 	
@@ -304,7 +315,7 @@ public class FileTracker implements java.io.Serializable   {
 					throw new Exception();
 				return ret;
 			}catch(Exception e){
-				System.out.println("warning, invalid piece size specified in config file");
+				e.printStackTrace();
 			}
 		}
 	
@@ -324,21 +335,6 @@ public class FileTracker implements java.io.Serializable   {
 		return (tot/nb)*100;
 	}
 	
-
-	// DEBUG
-	public void printBufferMap(){
-		System.out.println("bufferMap:");
-		for (int i = 0; i < numberPieces; i++) {
-			if(bufferMap.get(i)){
-				System.out.print("1");
-			}else{
-				System.out.print("0");
-			}
-		}
-		System.out.println("");
-	}
-	
-
 	public int getNumberPieces(){
 		return numberPieces;
 	}
@@ -360,19 +356,7 @@ public class FileTracker implements java.io.Serializable   {
 	 * @return
 	 */
 	public String getBuffermap(){
-		synchronized (bufferMap) {
-			String ret = "";
-			int size = bufferMap.length();
-			
-			for(int i = 0 ; i < size;i ++){
-				if(bufferMap.get(i)){
-					ret+='1';
-				}else{
-					ret += '0';
-				}
-			}
-			return ret;
-		}
+		return bufferMap;
 	}
 
 
@@ -383,7 +367,7 @@ public class FileTracker implements java.io.Serializable   {
 	public boolean hasPart() {
 		int size = bufferMap.length();
 		for(int i=0; i<size; i++) {
-			if(bufferMap.get(i)) {
+			if(bufferMap.charAt(i) == '1') {
 				return true;
 			}
 		}

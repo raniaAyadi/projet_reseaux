@@ -8,6 +8,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -16,7 +17,7 @@ import java.util.logging.Logger;
  * @author Hmama Adem
  *
  */
-public abstract class Connection {
+public abstract class Connection{
 	protected String ip;
 	protected int port;
 	protected BufferedInputStream is;
@@ -31,6 +32,15 @@ public abstract class Connection {
 		this.log = Logger.getLogger(this.getClass().getName());
 	}
 	
+	public String getIp() {
+		return ip;
+	}
+
+
+	public int getPort() {
+		return port;
+	}
+
 	/**
 	 * Establishes connection with server, sends a string formatted request, and sets up the inputStream
 	 * which will be parsed by the caller method depending on the protocol's expected response
@@ -40,11 +50,13 @@ public abstract class Connection {
 	 * @throws Exception
 	 */
 	protected void makeRequest(String request) throws UnknownHostException, IOException {
+		System.out.println(request +" send to "+port);
         soc = new Socket(ip,port);
         is = new BufferedInputStream(soc.getInputStream());
 		writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(soc.getOutputStream())), true);	
 		writer.println(request);
 		writer.flush();
+		this.log.log(Level.INFO, request);
 	}
 	
 	/**

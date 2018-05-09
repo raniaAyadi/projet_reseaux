@@ -33,6 +33,7 @@ public class Config {
 
 	public static int poolSize;
 	public static int updatePeriod;
+	public static int peerConnectionNumber;
 	
 	public static String metaPath;
 	public static String downloadPath;
@@ -151,6 +152,12 @@ public class Config {
 			poolSize = Integer.parseInt(propreties.getProperty("pool-size"));
 		}
 		
+		peerConnectionNumber = 5;
+		if(propreties.containsKey("peer-connection-number")) {
+			peerConnectionNumber = Integer.parseInt(propreties.getProperty("peer-connection-number"));
+		}
+		
+		
 		// upload and download paths are optional, gets set if specified in
 		// config file (after validation else any invalid path will be removed 
 		// from the config file (persist method only persists non null properties)
@@ -197,6 +204,7 @@ public class Config {
 		propreties.setProperty("meta-path", metaPath);
 		propreties.setProperty("update-period", Integer.toString(updatePeriod));
 		propreties.setProperty("pool-size", Integer.toString(poolSize));
+		propreties.setProperty("peer-connection-number", Integer.toString(peerConnectionNumber));
 
 		if (downloadPath != null)
 			propreties.setProperty("download-path", downloadPath);
@@ -248,7 +256,10 @@ public class Config {
 				.withDescription("Schedule communication Peer-Peer and Tracker-Peer every update period")
 				.hasArg().withArgName("Number").create());
 		options.addOption(OptionBuilder.withLongOpt("pool-size")
-				.withDescription("Limit Peer-Peer conenction number")
+				.withDescription("The pool size for Peer-Peer upload connection")
+				.hasArg().withArgName("Number").create());
+		options.addOption(OptionBuilder.withLongOpt("peer-connection-number")
+				.withDescription("Limit Peer-Peer download conenction number")
 				.hasArg().withArgName("Number").create());
 		
 		return options;
