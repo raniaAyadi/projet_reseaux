@@ -58,6 +58,7 @@ public class UiServer implements Runnable {
 					String path = dec[5];
 					if(path.equals("null"))
 						path = null;
+					System.out.println("about to return");
 					res = gson.toJson(UserAction.startLeech(filename, size, pieceSize, key, path));
 					System.out.println("got request : " + filename + " " + size + " " + pieceSize + " " + key + " " + path);
 					System.out.println("res: " + res);
@@ -77,7 +78,7 @@ public class UiServer implements Runnable {
 					res = gson.toJson(UserAction.searchFiles(filename, minSize, maxSize));
 				}else if(dec[0].equals("getmanagedfiles")){
 					gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-					// TODO : filetracker => @Expose
+					res = gson.toJson(UserAction.getManagedFiles());
 				}else if(dec[0].equals("getstats")){
 					res = gson.toJson(UserAction.getStats());
 				}else if(dec[0].equals("getbuffermap")){
