@@ -25,7 +25,9 @@ public class PieceDownloader implements Runnable {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}		this.ft = ft;
+		}		
+		
+		this.ft = ft;
 		this.req = new ArrayList<>();
 		req.add(i);
 	}

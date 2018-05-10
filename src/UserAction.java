@@ -88,12 +88,15 @@ public class UserAction {
 	 * @param maxSize
 	 * @return list of files on the network corresponding to the selected criteria 
 	 * @throws FileNotAvailableException  if the search fail after TTL
+	 * @throws InterruptedException 
 	 * @throws Exception
 	 */
-	public static List<FileInfo> searchFiles(String fileName,Integer minSize,Integer maxSize) throws FileNotAvailableException {
+	public static List<FileInfo> searchFiles(String fileName,Integer minSize,Integer maxSize) throws FileNotAvailableException, InterruptedException {
+		long ttl = Config.ttlSearchFile;
 		long startTime = System.currentTimeMillis();
 		List<FileInfo> ret;
-		while( (System.currentTimeMillis() - startTime) < Config.ttlSearchFile) {
+		
+		while( (System.currentTimeMillis() - startTime) < ttl) {
 			try {
 				ret = ApplicationContext.trackerConnection.look(fileName, minSize, maxSize);
 				for(FileInfo f : ret)
@@ -101,6 +104,7 @@ public class UserAction {
 					else f.managed = false;
 				return ret;
 			} catch (Exception e) {
+				Thread.sleep((long) (ttl*0.1));
 				e.printStackTrace();
 			}
 			

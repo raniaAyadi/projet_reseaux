@@ -39,7 +39,7 @@ public class Swarm extends TimerTask{
 		}
 		
 	}
-	
+		
 	synchronized public Piece selectRarestPiece() {
 		Collections.sort(pieces);
 		Piece p = null;
