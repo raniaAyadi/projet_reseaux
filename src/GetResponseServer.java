@@ -1,7 +1,9 @@
 
 import java.util.Set;
+import java.util.logging.Level;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.InetAddress;
 import java.util.Map;
 
 public class GetResponseServer extends Response {
@@ -41,7 +43,7 @@ public class GetResponseServer extends Response {
 	}		
 
 	@Override
-	protected void sendMessage() throws IOException {
+	protected void sendMessage(InetAddress add) throws IOException {
 		String key = (String) fields.get(Constant.Config.KEY);
 		FileTracker f = ApplicationContext.fileTrackers.get(key);
 		
@@ -70,10 +72,12 @@ public class GetResponseServer extends Response {
 		    	out.write(SEP.getBytes());
 		    System.out.println("im here");
 			out.flush();
+			this.log.log(Level.CONFIG, "Piece "+i+" of file "+f.getFileName()+" is uploaded by "+add.toString());
 		}
 		
 		out.write("]".getBytes());
 		out.flush();
+		
 	}
 	
 }

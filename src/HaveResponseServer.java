@@ -2,6 +2,7 @@
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.util.Map;
 
 public class HaveResponseServer extends Response {
@@ -31,7 +32,7 @@ public class HaveResponseServer extends Response {
 	}
 
 	@Override
-	protected void sendMessage() throws IOException {
+	protected void sendMessage(InetAddress add) throws IOException {
 		String key = (String) this.fields.get(Constant.Config.KEY);
 		FileTracker f = ApplicationContext.fileTrackers.get(key);
 		String bufferMap = f.getBuffermap();

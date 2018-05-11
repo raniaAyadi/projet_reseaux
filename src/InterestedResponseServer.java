@@ -2,7 +2,9 @@
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * Classe InitResponse
@@ -26,7 +28,7 @@ public class InterestedResponseServer extends Response {
 		}		
 	}
 	@Override
-	protected void sendMessage() {
+	protected void sendMessage(InetAddress add) {
 		String key = (String) this.fields.get(Constant.Config.KEY);
 		FileTracker f = ApplicationContext.fileTrackers.get(key);
 		String bufferMap = f.getBuffermap();
@@ -40,6 +42,8 @@ public class InterestedResponseServer extends Response {
 		PrintWriter p = new PrintWriter(this.out);
 		p.print(message);
 		p.flush();
+		
+		this.log.log(Level.INFO, "The client "+add.toString()+" is intersted by the file "+f.getFileName());
 	}
 	
 

@@ -38,6 +38,7 @@ public class Config {
 	public static int updatePeriod;
 	public static int peerConnectionNumber;
 	public static int ttlSearchFile;
+	public static int logVerbosity;
 	
 	public static String metaPath;
 	public static String downloadPath;
@@ -166,6 +167,11 @@ public class Config {
 			ttlSearchFile = Integer.parseInt(propreties.getProperty("ttl-search-file"));
 		}
 		
+		logVerbosity = 2;
+		if(propreties.contains("log-verbosity")) {
+			logVerbosity = Integer.parseInt(propreties.getProperty("log-verbosity"));
+		}
+		
 		// upload and download paths are optional, gets set if specified in
 		// config file (after validation else any invalid path will be removed 
 		// from the config file (persist method only persists non null properties)
@@ -214,6 +220,7 @@ public class Config {
 		propreties.setProperty("pool-size", Integer.toString(poolSize));
 		propreties.setProperty("peer-connection-number", Integer.toString(peerConnectionNumber));
 		propreties.setProperty("ttl-search-file", Integer.toString(ttlSearchFile));
+		propreties.setProperty("log-verbosity", Integer.toString(logVerbosity));
 
 		if (downloadPath != null)
 			propreties.setProperty("download-path", downloadPath);
@@ -273,6 +280,9 @@ public class Config {
 		options.addOption(OptionBuilder.withLongOpt("ttl-search-file")
 				.withDescription("The limit time for file searching through the network")
 				.hasArg().withArgName("Numner").create());
+		options.addOption(OptionBuilder.withLongOpt("log-verbosity")
+				.withDescription("0 for low, 1 for meduim and 3 for high")
+				.hasArg().withArgName("Number").create());
 		
 		return options;
 	}

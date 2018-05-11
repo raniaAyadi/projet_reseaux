@@ -5,6 +5,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -60,7 +62,7 @@ public class ServerThread implements Runnable {
 	
 	private void send(Request req) throws IOException, ProtocolException {
 		Response res = ResponseFactory.createResponse(req, out);
-		res.sendMessage();
+		res.sendMessage(socket.getInetAddress());
 		//log.log(Level.INFO, "Message to send is :"+message);
 	}
 	

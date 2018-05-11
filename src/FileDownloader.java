@@ -5,6 +5,8 @@ import java.util.Timer;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.HashSet;
 
 /**
@@ -20,8 +22,10 @@ public class FileDownloader implements Runnable {
 	private Set<PeerConnection> connections;
 	private Swarm swarm;
 	private ExecutorService executor;
+	private Logger log;
 	
 	FileDownloader(FileTracker ft) throws Exception{
+		this.log = Logger.getLogger(Constant.Log.DOWNLOAD_LOG);
 		this.ft = ft;
 		connections = new HashSet<>();
 		List<SimpleEntry<String , Integer>> ret =  ApplicationContext.trackerConnection.getfile(ft.getKey());
@@ -100,6 +104,8 @@ public class FileDownloader implements Runnable {
 						
 			downloadRarestPiece();
 		}
+		
+		log.log(Level.INFO, "The file "+ft.getFileName()+" is completly downloaded");
 	}
 	
 }

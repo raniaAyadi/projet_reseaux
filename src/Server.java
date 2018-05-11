@@ -28,7 +28,7 @@ public class Server extends Thread {
 	 * @param portNum numéro de port
 	 */
 	public Server(Integer portNum){
-		this.log = Logger.getLogger(this.getClass().getName());
+		this.log = Logger.getLogger(Constant.Log.UPLOAD_LOG);
 		this.portNum = portNum;
 		this.threadList = new ArrayList<ServerThread>(); 
 		
@@ -47,7 +47,7 @@ public class Server extends Thread {
 			serverSocket = new ServerSocket(this.portNum);
 			log.log(Level.INFO,"Listening on port "+this.portNum);
 		} catch (IOException e) {
-			log.log(Level.WARNING,"Failed listening on port "+this.portNum);
+			log.log(Level.INFO,"Failed listening on port "+this.portNum);
 			e.printStackTrace();
 		}
 	}
@@ -64,7 +64,6 @@ public class Server extends Thread {
 				threadList.add(serverThread);
 				executor.execute(serverThread);
 			} catch (IOException e) {
-				log.log(Level.WARNING,"Failed connection");
 				e.printStackTrace();
 			}	
 			
@@ -75,7 +74,6 @@ public class Server extends Thread {
 	 * redéfinition de la méthode run de Thread pour lancer le thread
 	 */
 	public void run(){
-		log.log(Level.INFO, Thread.currentThread().getName());
 		connect();
 	}
 }

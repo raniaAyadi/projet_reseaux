@@ -1,13 +1,16 @@
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 public class PieceDownloader implements Runnable {	
 	
 	private PeerConnection con;
 	private List<Integer> req;
 	private FileTracker ft;
+	private Logger log;
 	
 	public PieceDownloader(FileTracker fileTrakcer, PeerConnection c, List<Integer> pieces) {
 		try {
@@ -16,6 +19,8 @@ public class PieceDownloader implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		this.log =Logger.getLogger(Constant.Log.DOWNLOAD_LOG);
 		this.req = pieces;
 		this.ft = fileTrakcer;
 	}
@@ -28,6 +33,7 @@ public class PieceDownloader implements Runnable {
 			e.printStackTrace();
 		}		
 		
+		this.log =Logger.getLogger(Constant.Log.DOWNLOAD_LOG);
 		this.ft = ft;
 		this.req = new ArrayList<>();
 		req.add(i);
@@ -44,6 +50,8 @@ public class PieceDownloader implements Runnable {
 					continue;
 				
 			    ft.addPiece(tosave, i);
+			    
+			    log.log(Level.CONFIG, "The piece "+i+" is downloaded by "+con.ip);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

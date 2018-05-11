@@ -2,6 +2,12 @@
 
 public class Constant {
 	
+	public class Log{
+		public static final String DOWNLOAD_LOG = "DOWNLOAD";
+		public static final String UPLOAD_LOG = "UPLOAD";
+		public static final String TRACKER_LOG = "TRACKER";
+	}
+	
 	public class Config{
 		public static final String FILE_CONFIG_PATH = "meta/config.xml";
 		public static final String SERVER_PORT = "serverPort";
