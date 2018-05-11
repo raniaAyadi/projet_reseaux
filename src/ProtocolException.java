@@ -1,14 +1,15 @@
 
+
 /**
  * Class ProtocolException
- * une exception est déclenchée si une requete recue n''est pas conforme au protocole associé
+ * une exception est dï¿½clenchï¿½e si une requete recue n''est pas conforme au protocole associï¿½
  */
 
 public class ProtocolException extends Exception {
 	
 	/**
 	 * 
-	 * @param s message à afficher
+	 * @param s message ï¿½ afficher
 	 */
 	public ProtocolException(String s) {
 		super(s);

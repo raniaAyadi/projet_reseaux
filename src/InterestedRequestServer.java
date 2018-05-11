@@ -1,3 +1,5 @@
+
+
 /**
  * Classe RequestInitialisation
  * permet de décoder et de vérifier la requete d'initialisation envoyé par le client
