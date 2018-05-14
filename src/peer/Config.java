@@ -18,6 +18,11 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+<<<<<<< HEAD:src/peer/Config.java
+=======
+
+
+>>>>>>> 9e37b0eb22242440655ae024fbb4ec98be1e0e02:src/Config.java
 /**
  * 
  * In order for the application to run, a list of configuration global variables
