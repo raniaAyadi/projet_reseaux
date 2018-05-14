@@ -18,8 +18,10 @@ public class PeriodicAnnounce extends TimerTask{
 	@Override
 	public void run() {
 		try {
+			Config.uploadLog.fine("update tracker");
 			this.tracker.announce();
 		} catch (IOException | ProtocolException e) {
+			Config.uploadLog.warning("failed to update tracker");
 			e.printStackTrace();
 		}
 	}

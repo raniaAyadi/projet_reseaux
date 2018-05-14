@@ -32,7 +32,7 @@ public class Server extends Thread {
 	 * @param portNum numéro de port
 	 */
 	public Server(Integer portNum){
-		this.log = Logger.getLogger(Constant.Log.UPLOAD_LOG);
+		this.log = Config.uploadLog;
 		this.portNum = portNum;
 		this.threadList = new ArrayList<ServerThread>(); 
 		
@@ -49,9 +49,9 @@ public class Server extends Thread {
 	private void listen() {
 		try {
 			serverSocket = new ServerSocket(this.portNum);
-			log.log(Level.INFO,"Listening on port "+this.portNum);
+			log.log(Level.CONFIG,"listening on port: "+this.portNum);
 		} catch (IOException e) {
-			log.log(Level.INFO,"Failed listening on port "+this.portNum);
+			log.log(Level.SEVERE,"failed listening on port: "+this.portNum);
 			e.printStackTrace();
 		}
 	}
