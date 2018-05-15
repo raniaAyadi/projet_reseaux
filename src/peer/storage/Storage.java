@@ -33,20 +33,14 @@ public class Storage {
 	}
 	
 	public static void writePiece(String filePath,byte[] piece,int offset) throws IOException  {	
-		// TODO : update to support files containing holes 
 		while(true){
 			try{
 				RandomAccessFile raf = new RandomAccessFile(filePath, "rw");
 				raf.seek(offset);
 				raf.write(piece);
 				raf.close();
-
 				break;
-			}catch (IOException e){
-				//System.out.println("File write failur, file is used by another process");
-				//throw e;
-			}
+			}catch (IOException e){} 
 		}
-	
 	}
 }

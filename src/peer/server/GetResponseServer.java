@@ -67,7 +67,6 @@ public class GetResponseServer extends Response {
 			
 		    try {
 				out.write(f.getPiece(i));
-				System.out.println("size "+f.getPiece(i).length);
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new IOException(e.getMessage());
@@ -75,7 +74,6 @@ public class GetResponseServer extends Response {
 		    
 		    if(j<parts.size())
 		    	out.write(SEP.getBytes());
-		    System.out.println("im here");
 			out.flush();
 			this.log.fine("Piece "+i+" of file "+f.getFileName()+" is uploaded by "+add.toString());
 		}

@@ -9,8 +9,8 @@ import peer.userInterface.UserAction;
 /**
  *
  * When activated, this thread listens for any changes on the upload directory,
- * in case a new file was added to the directory a new file Tarcker is
- * instanciated, and the application starts automatically seeding that file
+ * in case a new file was added to the directory a new file Tracker is
+ * instantiated, and the application starts automatically seeding that file
  *
  * @author Adem Hmama
  * @version 1.0
@@ -22,7 +22,6 @@ public class UploadListener implements Runnable {
 	public void run() {
 		Set<String> added = new HashSet<>();
 		while (true) {
-			// collect all the currently tracked files
 			Set<String> metaFiles = new HashSet<>();
 			File metaDir = new File(Config.metaPath);
 			for (File meta : metaDir.listFiles()) {
@@ -33,9 +32,6 @@ public class UploadListener implements Runnable {
 			}
 
 			File uploadDir = new File(Config.uploadPath);
-			// TODO: do some checking, user might delete the directory, this
-			// should leed into an error resluting in listener shutdown
-
 			for (File fl : uploadDir.listFiles()) {
 				if (fl.isDirectory())
 					continue;
@@ -50,17 +46,12 @@ public class UploadListener implements Runnable {
 					}
 				}
 			}
-
 			try {
-				// TODO: find another more appropriate way to listen to 
-				// directory changes (java api ?)
 				Thread.sleep(2 * 1000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-
 	}
 
 }

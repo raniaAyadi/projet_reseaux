@@ -27,7 +27,6 @@ public class InterestedResponseServer extends Response {
 	@Override
 	protected void verify() throws ProtocolException {
 		String key = (String) this.fields.get(Constant.Config.KEY);
-		System.out.println(this.getClass().getName()+key);
 		if(ApplicationContext.fileTrackers.containsKey(key) == false){
 			throw new ProtocolException("Vérfier la clé "+key);
 		}		
