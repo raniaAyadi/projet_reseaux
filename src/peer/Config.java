@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -89,7 +90,7 @@ public class Config {
 
 		loadConfig();
 		logVerbosity = 1; // default is medium = CONFIG 
-		if(propreties.contains("log-verbosity")) {
+		if(propreties.containsKey("log-verbosity")) {
 			logVerbosity = Integer.parseInt(propreties.getProperty("log-verbosity"));
 			if(logVerbosity < 0 && logVerbosity > 2) logVerbosity = 1;
 		}
@@ -220,27 +221,30 @@ public class Config {
 			poolSize = Integer.parseInt(propreties.getProperty("pool-size"));
 		}
 		
+		
 		peerConnectionNumber = 5;
 		if(propreties.containsKey("peer-connection-number")) {
 			peerConnectionNumber = Integer.parseInt(propreties.getProperty("peer-connection-number"));
 		}
 		
 		ttlSearchFile = 20000;
-		if(propreties.contains("ttl-search-file")) {
+		if(propreties.containsKey("ttl-search-file")) {
 			ttlSearchFile = Integer.parseInt(propreties.getProperty("ttl-search-file"));
 		}
 		
 		messageMaxSize = 1024;
-		if(propreties.contains("message-max-size")) {
+		if(propreties.containsKey("message-max-size")) {
 			messageMaxSize = Integer.parseInt(propreties.getProperty("message-max-size"));
 		}
 		
-		if(propreties.contains("ui-port")){
+		if(propreties.containsKey("ui-port")){
 			uiPort = Integer.parseInt(propreties.getProperty("ui-port"));
 		}
 		if(!Operation.testListenPort(uiPort)){
 			uiPort = Operation.generateValidListenPort();
 		}
+		if(uiPort == 0) uiPort = 8080; // default
+		
 
 		uploadPath = null;
 		if (propreties.containsKey("upload-path")) {
@@ -385,19 +389,26 @@ public class Config {
 	}
 	
 	private static void setHandler(Logger l, String logName) throws SecurityException, IOException {
+		l.setUseParentHandlers(false);
 		FileHandler fh = new FileHandler(logName);
+		ConsoleHandler ch = new ConsoleHandler();
 		Operation.setFomater(fh);
+		Operation.setFomater(ch);
+		ch.setLevel(Level.CONFIG);
 		l.addHandler(fh);
-
+		l.addHandler(ch);
 		switch (Config.logVerbosity) {
 		case 0: // low
 			l.setLevel(Level.WARNING); 
+			ch.setLevel(Level.WARNING);
 			break;
 		case 1: // medium
 			l.setLevel(Level.CONFIG);
+			ch.setLevel(Level.CONFIG);
 			break;
 		case 2: // high 
 			l.setLevel(Level.FINE);
+			ch.setLevel(Level.FINE);
 			break;
 		}
 	}

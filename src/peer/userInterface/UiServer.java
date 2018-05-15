@@ -105,6 +105,7 @@ public class UiServer implements Runnable {
 			writer.println(res);
 			writer.flush();
 			s.close();
+			Config.generalLog.warning("unvalid request from UI client");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

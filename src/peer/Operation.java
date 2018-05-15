@@ -4,6 +4,7 @@ import java.net.ServerSocket;
 import java.util.BitSet;
 import java.util.Date;
 import java.util.logging.FileHandler;
+import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 import java.util.logging.SimpleFormatter;
 
@@ -67,7 +68,7 @@ public class Operation {
 		return index;
 	}
     
-	public static void setFomater(FileHandler f) {
+	public static void setFomater(Handler f) {
 		/*
 		f.setFormatter(new SimpleFormatter() {
 			private static final String format = "[%1$tF %1$tT] [%2$-7s] %3$s %n";
