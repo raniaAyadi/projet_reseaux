@@ -66,10 +66,9 @@ public class FileDownloader implements Runnable {
 				executor.execute(th);
 			}
 			return true;
-		}
-
-		else
+		}else{
 			return false;
+		}
 	}
 
 	private boolean downlaodRandomPieces() {
@@ -96,7 +95,7 @@ public class FileDownloader implements Runnable {
 	}
 
 	/**
-	 * Download algo
+	 * Download routine
 	 */
 	@Override
 	public void run() {
@@ -104,6 +103,7 @@ public class FileDownloader implements Runnable {
 		downlaodRandomPieces();
 
 		while (!ft.isSeeding()) {
+			
 			// wait if user paused download
 			if (ft.isSuspended()) {
 				Config.downloadLog.info("download-paused: " + ft.getFileName());

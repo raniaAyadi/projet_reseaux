@@ -43,7 +43,6 @@ public class Swarm extends TimerTask{
 
 			}
 		}
-		
 	}
 	
 	synchronized public List<Piece> selectRamdomPiece(int nb){
@@ -123,7 +122,6 @@ public class Swarm extends TimerTask{
 				pc = new PeerConnection(p, fileTracker);
 				pc.have(mine, key);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 

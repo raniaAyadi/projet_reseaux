@@ -14,14 +14,8 @@ public class PieceDownloader implements Runnable {
 	private FileTracker ft;
 	private Logger log;
 	
-	public PieceDownloader(FileTracker fileTrakcer, PeerConnection c, List<Integer> pieces) {
-		try {
-			this.con = new PeerConnection(c, ft);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+	public PieceDownloader(FileTracker fileTrakcer, PeerConnection c, List<Integer> pieces) {	
+		this.con = new PeerConnection(c, ft);
 		this.log =Logger.getLogger(Constant.Log.DOWNLOAD_LOG);
 		this.req = pieces;
 		this.ft = fileTrakcer;
@@ -37,12 +31,10 @@ public class PieceDownloader implements Runnable {
 					continue;
 				
 			    ft.addPiece(tosave, i); 
-			    log.fine("The piece "+i+" is sent by "+con.ip);
+			    log.fine("got piece <"+i+"> from <"+con.ip+">");
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.warning("failed to download pieces");
 		}
 	}
-
 }

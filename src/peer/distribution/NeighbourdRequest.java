@@ -9,13 +9,11 @@ public class NeighbourdRequest extends Request{
 	
 	public NeighbourdRequest(String in) throws ProtocolException {
 		super(in);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	protected void setExp() {
 		this.exp = EXP;
-		
 	}
 
 	@Override

@@ -115,9 +115,8 @@ public class TrackerConnection extends Connection{
 			ret.add(info);
 		}
 		acceptNext("]");
-		endRequest();
 		
-		System.out.println("look "+ret.size());
+		endRequest();
 		return ret;
 	}
 
@@ -132,8 +131,7 @@ public class TrackerConnection extends Connection{
 		acceptNext("peers");
 		String returnedKey = readUntil(' ');
 		if(!returnedKey.equals(key)){
-			// TODO : handel error : throw exception
-			System.out.println("error parsing response from trakcer : invalid key returned in response ");
+			Config.generalLog.warning("error parsing response from trakcer : invalid key returned in response ");
 		}
 		acceptNext("[");
 		while(peekNext() != ']'){

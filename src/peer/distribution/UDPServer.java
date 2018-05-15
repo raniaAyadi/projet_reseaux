@@ -20,21 +20,18 @@ public class UDPServer extends Thread{
 			group = InetAddress.getByName(Config.multicastIP);
 			log.info("Group "+group.getAddress().toString());
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try {
 			this.socket = new MulticastSocket(Config.udpPort);
 			log.info("Port "+socket.getPort());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		try {
 			socket.joinGroup(group);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -48,7 +45,6 @@ public class UDPServer extends Thread{
 				socket.receive(packet);
 				(new Thread(new PacketThread(packet))).start();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

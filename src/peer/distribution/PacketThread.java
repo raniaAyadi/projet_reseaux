@@ -27,8 +27,7 @@ public class PacketThread implements Runnable {
 		if(req == null) {
 			//A préciser l'exception (ClassNotFoundEception, etc)
 			throw new IOException();
-		}
-		
+		}	
 		return req;
 	}
 	
@@ -42,7 +41,6 @@ public class PacketThread implements Runnable {
 		try {
 			socket = new DatagramSocket();
 		} catch (SocketException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	    
@@ -56,10 +54,8 @@ public class PacketThread implements Runnable {
 	    try {
 			socket.send(packet);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	    
 	    socket.close();
 	}
 	
@@ -68,10 +64,8 @@ public class PacketThread implements Runnable {
 		try {
 			communicate();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ProtocolException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

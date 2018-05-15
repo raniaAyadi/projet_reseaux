@@ -9,41 +9,29 @@ import java.net.Socket;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import peer.Config;
+
 /**
  * This class must expose all user actions over TCP to UI client
  * since UI is going to be built on browser, its better to have Json encoded response
- * No need for a multithreaded server since only one client is going to connect to it
+ * No need for a multithreaded  server since only one client is going to connect to it
  * @author Hmama Adem
  *
  */
 public class UiServer implements Runnable {
 	
-	private void error(Socket s,PrintWriter writer, String error) {
-		try {
-			String res = "{\"error\":\""+ error +"\"}"; 
-			writer.println(res);
-			writer.flush();
-			s.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-	}
-	
-	// TODO: error handling + testing
 	public void run() {
 		ServerSocket s;
 		try {
-			
-			
-			s = new ServerSocket(8080);
-			System.out.println("UI listening on port 8080");
+			// TODO: error handling + testing
+			int port = Config.uiPort;
+			s = new ServerSocket(port);
+			Config.generalLog.config("UI server listening on port <"+port+">");		
 			while (true) {
 				Socket soc = s.accept();
 				BufferedReader reader = new BufferedReader(new InputStreamReader(soc.getInputStream()));
 				PrintWriter writer = new PrintWriter(soc.getOutputStream());
 				String request = reader.readLine();
-				System.out.println("requst : " + request);
 				String[] dec = request.split(" ");
 				Gson gson = new Gson();
 				String res = "";
@@ -59,10 +47,7 @@ public class UiServer implements Runnable {
 					String path = dec[5];
 					if(path.equals("null"))
 						path = null;
-					System.out.println("about to return");
 					res = gson.toJson(UserAction.startLeech(filename, size, pieceSize, key, path));
-					System.out.println("got request : " + filename + " " + size + " " + pieceSize + " " + key + " " + path);
-					System.out.println("res: " + res);
 				}else if(dec[0].equals("startseed")){
 					String[] das = request.split("'");
 					res = gson.toJson(UserAction.startSeed(das[1]));
@@ -112,5 +97,16 @@ public class UiServer implements Runnable {
 			e.printStackTrace();
 		}
 		
+	}
+
+	private void error(Socket s,PrintWriter writer, String error) {
+		try {
+			String res = "{\"error\":\""+ error +"\"}"; 
+			writer.println(res);
+			writer.flush();
+			s.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

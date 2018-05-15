@@ -16,26 +16,12 @@ import peer.storage.FileTracker;
 
 
 /**
- * This class holds user actions, all methods must be exposed over tcp and mapped to front end 
- * @author msi
+ * This class holds user actions, all methods are exposed over TCP by the UI server
+ * @author Hmama Adem
  *
  */
 public class UserAction {
 	private static Logger log = Logger.getLogger(UserAction.class.getName());
-
-	//On suppose que la tracker retourne aprés request look un seul fichier
-	public static void download(String fileName,Integer minSize,Integer maxSize, String path) throws Exception{
-		List<FileInfo> files = searchFiles(fileName, minSize, maxSize);
-		
-		log.log(Level.INFO, "size of look-files returned by tracker : "+files.size());
-		if(files.isEmpty()) {
-			//throw new FileNotAvailableException("File not avaible in network actually");
-		}
-		
-		//TODO size > 1
-		FileInfo f = files.get(0);
-		startLeech(f.fileName, f.fileSize, f.pieceSize, f.key, path);
-	}
 	
 	/**
 	 * 
@@ -69,10 +55,8 @@ public class UserAction {
 		if(!fl.exists())
 			throw new FileNotFoundException();
 		if(fl.isDirectory())
-			throw new Exception("specified path corresponds to a directory, only files are supported"); // TODO : custom exception
-		// TODO : test if file exists on the network, if so tell him to change the name of the file
-		//if(!searchFiles(fl.getName(), null, null).isEmpty())
-		//	throw new FileExistsOnNetworkException();
+			throw new Exception("specified path corresponds to a directory, only files are supported"); 
+		// TODO : test if file exists on the network
 		FileTracker ft = new FileTracker(fl);
 		return ApplicationContext.addFileTracker(ft);
 	}
@@ -112,7 +96,6 @@ public class UserAction {
 				Thread.sleep((long) (ttl*0.1));
 				e.printStackTrace();
 			}
-			
 		}
 		
 		throw new FileNotAvailableException("The file does not exist");
@@ -158,7 +141,6 @@ public class UserAction {
 	 * Stop managing the file 
 	 */
 	public static void removeFile(Integer id){
-		// TODO: throw exception if id non valid
 		FileTracker ref = ApplicationContext.getById(id);
 		Timer t =  ApplicationContext.timers.get(id);
 		ApplicationContext.idMapper.remove(id);
@@ -180,7 +162,6 @@ public class UserAction {
 	}
 	
 	public static void pauseLeech(Integer id){
-		// TODO : error checking 
 		FileTracker ft = ApplicationContext.getById(id);
 		if(ft.isSuspended())
 			return;
@@ -188,11 +169,24 @@ public class UserAction {
 	}
 	
 	public static void resumeLeech(Integer id){
-		// TODO: error check, why two consecutive resumes, pauseLeech doesn't pause.
 		FileTracker ft = ApplicationContext.getById(id);
 		if(!ft.isSuspended())
 			return;
 		ft.resume();
+	}
+	
+	//On suppose que la tracker retourne aprés request look un seul fichier
+	public static void download(String fileName,Integer minSize,Integer maxSize, String path) throws Exception{
+		List<FileInfo> files = searchFiles(fileName, minSize, maxSize);
+		
+		log.log(Level.INFO, "size of look-files returned by tracker : "+files.size());
+		if(files.isEmpty()) {
+			//throw new FileNotAvailableException("File not avaible in network actually");
+		}
+		
+		//TODO size > 1
+		FileInfo f = files.get(0);
+		startLeech(f.fileName, f.fileSize, f.pieceSize, f.key, path);
 	}
 	
 }

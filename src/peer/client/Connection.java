@@ -12,7 +12,7 @@ import peer.Config;
 import peer.server.ProtocolException;
 
 /**
- * Abstract class providing basic tcp connection utilities like  establishing connection, sending request and other methods 
+ * Abstract class providing basic TCP connection utilities like  establishing connection, sending request and other methods 
  * useful for parsing responses
  * @author Hmama Adem
  *
@@ -48,8 +48,8 @@ public abstract class Connection{
 	 */
 	protected void makeRequest(String request) throws UnknownHostException, IOException {
 		if(port !=Config.trackerPort)
-			Config.downloadLog.config("The message : "+request+" is sent to "+ip+":"+port);
-      
+			Config.downloadLog.fine("TCP request: <"+request+"> sent to <"+ip+":"+port+">");
+		
 		soc = new Socket(ip,port);
         is = new BufferedInputStream(soc.getInputStream());
 		writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(soc.getOutputStream())), true);	
@@ -58,7 +58,7 @@ public abstract class Connection{
 	}
 	
 	/**
-	 * Free ressources
+	 * Free resources 
 	 * @throws IOException 
 	 * @throws Exception
 	 */
@@ -68,7 +68,6 @@ public abstract class Connection{
 		soc.close();
 	}
 
-	
 	protected  void accept(String word) throws ProtocolException, IOException{
 		String found = "";
 		for(int i=0;i<word.length();i++){
@@ -134,5 +133,4 @@ public abstract class Connection{
 		is.reset();
 		return c;
 	}
-	
 }

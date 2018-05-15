@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import peer.Config;
 import peer.server.ProtocolException;
 import peer.storage.FileTracker;
 
@@ -15,23 +16,29 @@ import peer.storage.FileTracker;
  *
  */
 public class PeerConnection extends Connection {
-	private String bufferMap; // the bitmap of the file in the	
+	private String bufferMap; // the bitmap of the file in the "connected" peer	
 	
 	public PeerConnection(String ip, int port, FileTracker ft) throws Exception {
 		super(ip, port);
 		updateBufferMap(ft);
 	}
 	
-	public PeerConnection(PeerConnection p, FileTracker ft) throws Exception {
+	public PeerConnection(PeerConnection p, FileTracker ft){
 		super(p.getIp(), p.getPort());
 	}
 	
-	// just for debug
+	// debug
 	public  void printbuffer(){
 		System.out.println(bufferMap);
 	}
 
-	// TODO: handel io/protocole exception at this level !! also all the other methods and the trackerconnection methods
+	/**
+	 * getpieces
+	 * @param offsets
+	 * @param ft
+	 * @return
+	 * @throws Exception
+	 */
 	public Map<Integer, byte[]> getpieces( List<Integer> offsets,FileTracker ft) throws Exception {
 		Map<Integer, byte[]> ret = new HashMap<>();
 		
@@ -47,27 +54,18 @@ public class PeerConnection extends Connection {
 		acceptNext("data");
 		String returnedKey = readUntil(' ', '[');
 		if(!ft.getKey().equals(returnedKey)){
-			// TODO: throw exception , handel error 
-			System.out.println("error getpieces: returned key is deffeent from what i asked for !! your lucky i didnt throw an exception");
+			Config.downloadLog.warning("implementation error: returned key is different from what i asked for");
 		}
 		acceptNext("[");
 		while(peekNext() != ']'){
 			escapeWhite();
 			Integer index = new Integer(readUntil(':'));
 			accept(":");
-			//System.out.println("ft.getpiecesize: " + ft.getPieceSize());
 			byte[] data = new byte[ft.getPieceSize()];
-			//System.out.println("data size: " + data.length);
-			int nb = is.read(data);
-			if(nb != ft.getPieceSize()){
-				// TODO: error from the other peer
-				//System.out.println("error when reading data at index: " + index);
-				//System.out.println("read " + nb +" bytes instead of " + ft.getPieceSize() + " (piece size)");
-			}
 			ret.put(index, data);
 		}
-		endRequest();
 		
+		endRequest();
 		return ret;
 	}
 	
@@ -93,7 +91,11 @@ public class PeerConnection extends Connection {
 		setBufferMap(ret);
 	}
 
-	// interested
+	/**
+	 * Interested
+	 * @param ft
+	 * @throws Exception
+	 */
 	private void updateBufferMap(FileTracker ft) throws Exception {
 		String req = "interested " + ft.getKey();
 		makeRequest(req);
@@ -101,18 +103,16 @@ public class PeerConnection extends Connection {
 		acceptNext("have");
 		String returnedKey = readUntil(' ');
 		if(!ft.getKey().equals(returnedKey)){
-			// TODO: throw exception 
-			System.out.println("wrong key returned from the other peer");
+			Config.downloadLog.warning("implementation error: wrong key returned from the other peer");
 		}
 		
 		escapeWhite();
 		String strBuf = readUntil(' ');
 		if(strBuf.length() !=  ft.getBuffermap().length()){
-			// TODO : error throw exception
-			System.out.println("error parsing the buffer map of response returned by another peer");
+			Config.downloadLog.warning("error parsing the buffer map of response returned by another peer");
 		}
+		
 		setBufferMap(strBuf);
-
 		endRequest();
 	}
 	
