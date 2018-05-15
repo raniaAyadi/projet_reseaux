@@ -6,6 +6,7 @@ public class Constant {
 	public class Log{
 		public static final String DOWNLOAD_LOG = "DOWNLOAD";
 		public static final String UPLOAD_LOG = "UPLOAD";
+		public static final String GENERAL_LOG = "GENERAL";
 		public static final String TRACKER_LOG = "TRACKER";
 	}
 	

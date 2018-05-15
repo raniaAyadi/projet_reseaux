@@ -68,18 +68,29 @@ public class Operation {
 	}
     
 	public static void setFomater(FileHandler f) {
+		
 		f.setFormatter(new SimpleFormatter() {
-            private static final String format = "[%1$tF %1$tT] [%2$-7s] %3$s %n";
+			private static final String format = "[%1$tF %1$tT] [%2$-7s] %3$s %n";
 
-            @Override
-            public synchronized String format(LogRecord lr) {
-                return String.format(format,
-                        new Date(lr.getMillis()),
-                        lr.getLevel().getLocalizedName(),
-                        lr.getMessage()
-                );
-            }
-     });
+			@Override
+			public synchronized String format(LogRecord lr) {
+				return String.format(format, new Date(lr.getMillis()), lr.getLevel().getLocalizedName(),
+						lr.getMessage());
+			}
+		});
+		
+		/* without date/time + add method name ???
+		f.setFormatter(new SimpleFormatter() {
+			public synchronized String format(LogRecord record) {
+				StringBuilder sb = new StringBuilder();
+				sb.append("[" + record.getLevel() + "] ");
+				sb.append(record.getSourceClassName() + "." + record.getSourceMethodName() + "(): ");
+				sb.append(record.getMessage());
+				sb.append(System.getProperty("line.separator"));
+				return sb.toString();
+			}
+		});
+		*/
 	}
 	
 	public static String encryptFileName(String name) {

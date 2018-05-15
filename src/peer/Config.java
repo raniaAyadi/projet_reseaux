@@ -37,11 +37,13 @@ public class Config {
 	public static int trackerPort;
 	public static String trackerIp;
 	public static int udpPort;
+	public static int uiPort;
 	public static String multicastIP;
 	public static int version; //centralisée = 0 et distribuée = 1
 	
 	public static Logger uploadLog;
 	public static Logger downloadLog;
+	public static Logger generalLog;
 	
 	public static int poolSize;
 	public static int updatePeriod;
@@ -82,15 +84,18 @@ public class Config {
 		if (line.hasOption("config-path")) {
 			String cp = line.getOptionValue("config-path");
 			File test = new File(cp);
-			if (test.isDirectory() || !test.exists()) {
-				System.out.println("Warning: invalid configuration path:" + cp);
-				System.out.println("Bootstraping from defaut config path: " + CONFIG_FILE_NAME);
-			} else {
-				CONFIG_FILE_NAME = cp;
-			}
+			if (!(test.isDirectory() || !test.exists())) CONFIG_FILE_NAME = cp;
 		}
 
 		loadConfig();
+		logVerbosity = 1; // default is medium = CONFIG 
+		if(propreties.contains("log-verbosity")) {
+			logVerbosity = Integer.parseInt(propreties.getProperty("log-verbosity"));
+			if(logVerbosity < 0 && logVerbosity > 2) logVerbosity = 1;
+		}
+		setLog();
+		
+		
 		version = 0;
 		if (propreties.containsKey("version")) {
 			version = Integer.parseInt(propreties.getProperty("version"));
@@ -105,7 +110,7 @@ public class Config {
 					trackerIp = line.getOptionValue("tracker-ip");
 					cont = false;
 				} else {
-					System.out.println("Invalid tracker-port argument, trying address from config...");
+					generalLog.config("Invalid tracker-port argument, trying address from config...");
 				}
 			}
 
@@ -116,13 +121,13 @@ public class Config {
 					trackerIp = propreties.getProperty("tracker-ip");
 					cont = false;
 				} else {
-					System.out.println("Invalid tracker-port from config file");
+					generalLog.config("Invalid tracker-port from config file");
 				}
 			}
 
 			if (cont) {
-				System.err.println("Unable to resolve tracker address");
-				System.exit(0);
+				generalLog.severe("Unable to resolve tracker address");
+				System.exit(-1);
 			}
 		}
 		else {
@@ -133,7 +138,7 @@ public class Config {
 					multicastIP = line.getOptionValue("multicast-ip");
 					cont = false;
 				} else {
-					System.out.println("Invalid udp-port argument, trying address from config...");
+					generalLog.config("Invalid udp-port argument, trying address from config...");
 				}
 			}
 
@@ -144,13 +149,12 @@ public class Config {
 					multicastIP = propreties.getProperty("multicast-ip");
 					cont = false;
 				} else {
-					System.out.println("Invalid udp-port from config file");
+					generalLog.config("Invalid udp-port from config file");
 				}
 			}
-
 			if (cont) {
-				System.err.println("Unable to resolve multicast address");
-				System.exit(0);
+				generalLog.severe("Unable to resolve multicast address");
+				System.exit(-1);
 			}
 		}
 
@@ -163,30 +167,30 @@ public class Config {
 				if (Operation.testListenPort(listenPort)) {
 					cont = false;
 				} else {
-					System.out.println("Port " + listenPort + " already in use");
+					generalLog.config("listen-port <" + listenPort + "> already in use");
 				}
 			} else {
-				System.out.println("Invalid argument listen-port");
+				generalLog.config("Invalid argument: listen-port");
 			}
 		}
 
 		if (cont && propreties.containsKey("listen-port")) {
-			System.out.println("Fetching listen-port from config file...");
+			generalLog.config("Fetching listen-port from config file...");
 			String temp = propreties.getProperty("listen-port");
 			if (isInt(temp)) {
 				listenPort = Integer.parseInt(temp);
 				if (Operation.testListenPort(listenPort)) {
 					cont = false;
 				} else {
-					System.out.println("Port " + listenPort + " already in use");
+					generalLog.config("listen-port:  <" + listenPort + "> already in use");
 				}
 			} else {
-				System.out.println("Invalid listen-port specified in config file");
+				generalLog.config("Invalid listen-port specified in config file");
 			}
 		}
 
 		if (cont) {
-			System.out.println("Generating listen-port number...");
+			generalLog.warning("Generating listen-port number...");
 			listenPort = Operation.generateValidListenPort();
 		}
 
@@ -226,19 +230,17 @@ public class Config {
 			ttlSearchFile = Integer.parseInt(propreties.getProperty("ttl-search-file"));
 		}
 		
-		logVerbosity = 2;
-		if(propreties.contains("log-verbosity")) {
-			logVerbosity = Integer.parseInt(propreties.getProperty("log-verbosity"));
-		}
-		
 		messageMaxSize = 1024;
 		if(propreties.contains("message-max-size")) {
 			messageMaxSize = Integer.parseInt(propreties.getProperty("message-max-size"));
 		}
 		
-		// upload and download paths are optional, gets set if specified in
-		// config file (after validation else any invalid path will be removed 
-		// from the config file (persist method only persists non null properties)
+		if(propreties.contains("ui-port")){
+			uiPort = Integer.parseInt(propreties.getProperty("ui-port"));
+		}
+		if(!Operation.testListenPort(uiPort)){
+			uiPort = Operation.generateValidListenPort();
+		}
 
 		uploadPath = null;
 		if (propreties.containsKey("upload-path")) {
@@ -247,9 +249,6 @@ public class Config {
 			if (test.exists()) {
 				if (test.isDirectory())
 					uploadPath = found;
-				else
-					System.out.println(
-							"Warning: invalid upload path specified in config file (entry will be deleted from config file)");
 			} else {
 				uploadPath = found;
 				test.mkdir();
@@ -262,17 +261,12 @@ public class Config {
 			if (test.exists()) {
 				if (test.isDirectory())
 					downloadPath = found;
-				else
-					System.out.println(
-							"Warning: invalid download path specified in config file (entry will be deleted from config file)");
 			} else {
 				downloadPath = found;
 				test.mkdir();
 			}
 		}
-
 		persistPropreties();
-		setLog();
 	}
 
 	private static void persistPropreties() throws FileNotFoundException {
@@ -287,6 +281,7 @@ public class Config {
 		propreties.setProperty("ttl-search-file", Integer.toString(ttlSearchFile));
 		propreties.setProperty("log-verbosity", Integer.toString(logVerbosity));
 		propreties.setProperty("message-max-size", Integer.toString(messageMaxSize));
+		propreties.setProperty("ui-port", Integer.toString(uiPort));
 
 		if (downloadPath != null)
 			propreties.setProperty("download-path", downloadPath);
@@ -311,9 +306,8 @@ public class Config {
 			try {
 				propreties.load(new FileInputStream(configFile));
 			} catch (Exception e) {
-				System.err.println(
-						"Unable to parse configuration file, fix syntaxe or simple delete it, a new config file will be created");
-				System.exit(0);
+				System.err.println("Unable to parse configuration file"); // loggers not ready yet
+				System.exit(-1);
 			}
 		}
 	}
@@ -348,7 +342,7 @@ public class Config {
 				.withDescription("The limit time for file searching through the network")
 				.hasArg().withArgName("Numner").create());
 		options.addOption(OptionBuilder.withLongOpt("log-verbosity")
-				.withDescription("0 for low, 1 for meduim and 3 for high")
+				.withDescription("0 for low, 1 for medium and 2 for high")
 				.hasArg().withArgName("Number").create());
 		options.addOption(OptionBuilder.withLongOpt("upload-path")
 				.withDescription("upload folder to share files")
@@ -364,9 +358,8 @@ public class Config {
 		File fl = new File(path);
 		if (fl.exists()) {
 			if (fl.isFile()) {
-				System.err.println(
-						"file " + path + " already exists, try setting path in config file or renaming the file");
-				System.exit(0);
+				generalLog.severe("File <" + path + "> already exists, try setting path in config file or renaming the file");
+				System.exit(-1);
 			}
 		} else {
 			fl.mkdir();
@@ -385,24 +378,27 @@ public class Config {
 	private static void setLog() throws SecurityException, IOException {
 		downloadLog = Logger.getLogger(Constant.Log.DOWNLOAD_LOG);
 		uploadLog = Logger.getLogger(Constant.Log.UPLOAD_LOG);
-		
-		FileHandler f1 = new FileHandler("download.log");
-		FileHandler f2 = new FileHandler("upload.log");
-		
-		Operation.setFomater(f1);
-		Operation.setFomater(f2);
+		generalLog = Logger.getLogger(Constant.Log.GENERAL_LOG);
+		setHandler(downloadLog,"download.log");
+		setHandler(uploadLog,"upload.log");
+		setHandler(generalLog,"app.log");
+	}
+	
+	private static void setHandler(Logger l, String logName) throws SecurityException, IOException {
+		FileHandler fh = new FileHandler(logName);
+		Operation.setFomater(fh);
+		l.addHandler(fh);
 
-		downloadLog.addHandler(f1);
-		uploadLog.addHandler(f2);
-		
-		switch (Config.logVerbosity){
-		case 1 :
-			downloadLog.setLevel(Level.CONFIG);
-			uploadLog.setLevel(Level.CONFIG);
+		switch (Config.logVerbosity) {
+		case 0: // low
+			l.setLevel(Level.WARNING); 
 			break;
-		case 2 :
-			downloadLog.setLevel(Level.FINE);
-			uploadLog.setLevel(Level.FINE);
+		case 1: // medium
+			l.setLevel(Level.CONFIG);
+			break;
+		case 2: // high 
+			l.setLevel(Level.FINE);
+			break;
 		}
 	}
 }

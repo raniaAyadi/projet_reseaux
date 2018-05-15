@@ -341,7 +341,6 @@ public class FileTracker implements java.io.Serializable   {
 			}
 		}
 	
-		if(size < 2*MB)    return 64; // TODO: remove this, i've added it just for testing
 		if(size < 10*MB)   return 16*KB;
 		if(size < 100*MB)  return 64*KB;
 		if(size < 500*MB)  return  128*KB;

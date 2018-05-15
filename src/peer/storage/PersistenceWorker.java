@@ -20,12 +20,12 @@ import peer.Config;
  * @version 1.0
  *
  */
-public class PersistanceWorker implements Runnable {
+public class PersistenceWorker implements Runnable {
 
 	private int interval;
 
 
-	public PersistanceWorker() throws Exception {
+	public PersistenceWorker() throws Exception {
 
 		// TODO: get the update frequency interval from the config file
 		interval = 1000 * 5;

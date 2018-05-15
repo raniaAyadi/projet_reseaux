@@ -49,7 +49,6 @@ public abstract class Connection{
 	protected void makeRequest(String request) throws UnknownHostException, IOException {
 		if(port !=Config.trackerPort)
 			Config.downloadLog.config("The message : "+request+" is sent to "+ip+":"+port);
-		System.out.println(request +" send to "+port);
       
 		soc = new Socket(ip,port);
         is = new BufferedInputStream(soc.getInputStream());
