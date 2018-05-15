@@ -29,8 +29,8 @@ public class FileDownloader implements Runnable {
 
 	private FileTracker ft;
 	private Set<PeerConnection> connections;
-	private Swarm swarm;
-	private ExecutorService executor;
+	private Swarm swarm; //communication oeridoique Peer-Peer 
+	private ExecutorService executor; // pool de thread
 	private int maxPiece;
 
 	public FileDownloader(FileTracker ft) throws Exception {
@@ -52,35 +52,39 @@ public class FileDownloader implements Runnable {
 	}
 
 	private boolean downloadPieces(List<Piece> p) {
+		//Regroupement de piece selon le peer correspondant
 		Map<PeerConnection, List<Integer>> m = new HashMap<>();
-		if (p != null) {
-			for (Piece i : p) {
-				PeerConnection pc = selectPeer(i.getSeeder());
-				if (m.containsKey(pc) == false)
-					m.put(pc, new ArrayList<>());
-				m.get(pc).add(i.getIndex());
-			}
-
-			for (PeerConnection pc : m.keySet()) {
-				PieceDownloader th = new PieceDownloader(ft, pc, m.get(pc));
-				executor.execute(th);
-			}
-			return true;
-		}else{
-			return false;
+		for (Piece i : p) {
+			PeerConnection pc = selectPeer(i.getSeeder());
+			if (m.containsKey(pc) == false)
+				m.put(pc, new ArrayList<>());
+			m.get(pc).add(i.getIndex());
 		}
+
+		for (PeerConnection pc : m.keySet()) {
+			PieceDownloader th = new PieceDownloader(ft, pc, m.get(pc));
+			executor.execute(th);
+		}
+		
+		return true;
 	}
 
+	//Choix aleatoire de pieces, jsute initialement
 	private boolean downlaodRandomPieces() {
 		List<Piece> p = swarm.selectRamdomPiece(this.maxPiece);
 		return downloadPieces(p);
 	}
 
+	//Selection de plus rare pieces
 	private boolean downloadRarestPieces() {
 		List<Piece> p = swarm.selectRarestPiece(this.maxPiece);
+		if(p == null)
+			return false;
+		
 		return downloadPieces(p);
 	}
 
+	//Selection aleatoire de Peer
 	private PeerConnection selectPeer(List<PeerConnection> s) {
 		int i = (int) (Math.random() * s.size());
 		int j = 0;

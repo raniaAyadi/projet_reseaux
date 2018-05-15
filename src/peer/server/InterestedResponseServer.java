@@ -13,7 +13,7 @@ import peer.storage.FileTracker;
 
 /**
  * Classe InitResponse
- * vérifie la validité de la requete, passée en paramètre, et construit le message à envoyer
+ * verifie la validite de la requete, passee en paramètre, et construit le message a envoyer
  */
 public class InterestedResponseServer extends Response {
 	public static final String HAVE = "have";

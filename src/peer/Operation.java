@@ -2,8 +2,6 @@ package peer;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.BitSet;
-import java.util.Date;
-import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 import java.util.logging.SimpleFormatter;
@@ -13,7 +11,7 @@ import org.jasypt.util.password.ConfigurablePasswordEncryptor;
 
 /**
  * Classe Operation
- * Operation impl�mente les focntions op�rationnelles indispensables comme des m�thodes static,
+ * Operation implemente les focntions operationnelles indispensables comme des methodes static,
  * holds helper methods used by both server and client modules
  */
 

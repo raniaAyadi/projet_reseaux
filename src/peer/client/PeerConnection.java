@@ -23,6 +23,7 @@ public class PeerConnection extends Connection {
 		updateBufferMap(ft);
 	}
 	
+	//Initier une nouvelle connexion 
 	public PeerConnection(PeerConnection p, FileTracker ft){
 		super(p.getIp(), p.getPort());
 	}

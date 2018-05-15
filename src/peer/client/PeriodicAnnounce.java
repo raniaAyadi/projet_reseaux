@@ -7,6 +7,11 @@ import java.util.TimerTask;
 import peer.Config;
 import peer.server.ProtocolException;
 
+/**
+ * Classe PeriodicAnnounce
+ * Une instance de PeriodicAnnounce est appellee perodiquement pour notifier le tracker de l etat de Peer
+ */
+
 public class PeriodicAnnounce extends TimerTask{
 	private TrackerConnection tracker;
 	

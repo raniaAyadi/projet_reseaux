@@ -71,7 +71,8 @@ public class FileTracker implements java.io.Serializable {
 		for (int i = 0; i < numberPieces; i++)
 			aux.put(i, '1');
 		this.bufferMap = aux.toString();
-
+		System.out.println("FileTracker bufferMap "+bufferMap);
+		
 		suspendLock = new Object();
 		statLock = new Object();
 		stop = false;

@@ -1,5 +1,8 @@
 package peer;
 
+/**
+ * La classe Constant englobe les constantes partagees entre les differents modules
+ */
 
 public class Constant {
 	

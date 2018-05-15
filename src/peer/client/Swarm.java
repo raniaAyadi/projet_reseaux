@@ -13,8 +13,8 @@ import peer.storage.Piece;
 
 
 /**
- * On associe à chaque piece non téléchargée identifié par son numéro la liste de Peer la possédant
- * Cette est met à jour pèriodiquement
+ * On associe a chaque piece non telechargee identifie par son numero la liste de Peer la possedant
+ * Cette Liste est met à jour pèriodiquement
  */
 public class Swarm extends TimerTask{
 	
@@ -73,8 +73,11 @@ public class Swarm extends TimerTask{
 		
 		return ret;
 	}
-		
+	
 	synchronized public List<Piece> selectRarestPiece(int nb) {
+		if(pieces.isEmpty())
+			return null;
+		
 		Collections.sort(pieces);
 		List<Piece> ret = new ArrayList<>(nb);
 	

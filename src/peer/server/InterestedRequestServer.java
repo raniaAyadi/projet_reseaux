@@ -5,7 +5,7 @@ import peer.Constant;
 
 /**
  * Classe RequestInitialisation
- * permet de décoder et de vérifier la requete d'initialisation envoyé par le client
+ * permet de décoder et de verifier la requete d'initialisation envoye par le client
  */
 
 public class InterestedRequestServer extends Request{
@@ -16,7 +16,7 @@ public class InterestedRequestServer extends Request{
 	/**
 	 * 
 	 * @param in le message recu 
-	 * @throws ProtocolException si le message n'est pas conforme au protocole
+	 * @throws ProtocolException si le message n est pas conforme au protocole
 	 */
 	public InterestedRequestServer(String in, InetAddress address) throws ProtocolException {
 		super(in, address);

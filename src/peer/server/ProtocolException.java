@@ -3,7 +3,7 @@ package peer.server;
 
 /**
  * Class ProtocolException
- * une exception est d�clench�e si une requete recue n''est pas conforme au protocole associ�
+ * une exception est declenchee si une requete recue n est pas conforme au protocole associe
  */
 
 @SuppressWarnings("serial")
@@ -11,7 +11,7 @@ public class ProtocolException extends Exception {
 	
 	/**
 	 * 
-	 * @param s message � afficher
+	 * @param s message a afficher
 	 */
 	public ProtocolException(String s) {
 		super(s);

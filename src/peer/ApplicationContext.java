@@ -104,7 +104,7 @@ public class ApplicationContext {
 		if (Config.uploadPath != null)
 			(new Thread(new UploadListener())).start();
 
-		// Start periodic communication
+		// Start periodic communication Tracker-Peer
 		periodicAnnounce.scheduleAtFixedRate(new PeriodicAnnounce(), 0, Config.updatePeriod);
 
 		// Start interface server

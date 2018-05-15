@@ -6,13 +6,11 @@ import java.util.Map;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import peer.ApplicationContext;
 import peer.Config;
 
 /**
  * Classe Decoder
- * Decoder est une classe abstraite pour décoder un message
+ * Decoder est une classe abstraite pour decoder un message
  */
 
 public abstract class Request {
@@ -75,13 +73,13 @@ public abstract class Request {
 	}
 	
 	/**
-	 * méthode abstraite
+	 * methode abstraite
 	 * remplir le dictionanire fields
 	 */
 	protected abstract void putFields();
 	
 	/**
-	 * Vérfiier si le message est conforme au protocole, sinon une exception est levée
+	 * Verfiier si le message est conforme au protocole, sinon une exception est levée
 	 * @throws ProtocolException
 	 */
 	private void verify() throws ProtocolException {

@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import peer.ApplicationContext;
 import peer.Config;
 import peer.server.ProtocolException;
 

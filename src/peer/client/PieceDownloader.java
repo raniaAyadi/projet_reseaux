@@ -6,6 +6,10 @@ import java.util.logging.Logger;
 import peer.Constant;
 import peer.storage.FileTracker;
 
+/**
+ * Classe PieceDownloader
+ * PieceDonwlaoder etablie la demande de telechargement d'un ensemble de pieces avec un seul Peer
+ */
 
 public class PieceDownloader implements Runnable {	
 	
@@ -34,6 +38,7 @@ public class PieceDownloader implements Runnable {
 			    log.fine("got piece <"+i+"> from <"+con.ip+">");
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.warning("failed to download pieces");
 		}
 	}

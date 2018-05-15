@@ -232,7 +232,7 @@ public class Config {
 			ttlSearchFile = Integer.parseInt(propreties.getProperty("ttl-search-file"));
 		}
 		
-		messageMaxSize = 1024;
+		messageMaxSize = 102400;
 		if(propreties.containsKey("message-max-size")) {
 			messageMaxSize = Integer.parseInt(propreties.getProperty("message-max-size"));
 		}

@@ -7,6 +7,7 @@ import peer.server.ProtocolException;
 
 public class NeighbourdResponse{
 	private  Map<String, Object> fields;   // input
+	@SuppressWarnings("unused")
 	private Logger log;
 	private String message;
 	
